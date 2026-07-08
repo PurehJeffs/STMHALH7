@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include "I2CLCD.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,9 +50,7 @@ I2C_HandleTypeDef hi2c2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-#define PCF8574_add  0x4E
-#define LCDStartup	0x34
-#define LCD4BitMode	0x20
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -147,108 +146,10 @@ int main(void)
   HAL_GPIO_WritePin(RedLED_GPIO_Port, RedLED_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(YellowLED_GPIO_Port, YellowLED_Pin, GPIO_PIN_SET);
   printf("first time baby\n\r");
-  char a= 'A';
   uint8_t ad= 'A';
   printf("0x%02X\r\n", ad);
+  LCDInit();
  // printf(a);
-  HAL_Delay(15);
-  uint8_t data;
-  data=LCDStartup;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-  data &= ~0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-  HAL_Delay(5);
-
-  data=LCDStartup;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-  data &= ~0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-  HAL_Delay(1);
-
-  data=LCDStartup;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-  data &= ~0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-  HAL_Delay(1);
-
-  data=LCD4BitMode;
-  data|=0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-  data &= ~0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-  HAL_Delay(1);
-
-  data=0x28;  //4bit , 2line
-  data|=0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-  data &= ~0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-
-  data=0x88;  //4bit , 2line
-  data|=0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-  data &= ~0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-
-  data=0x0C;   //displayon
-  data|=0x08;
-  data|=0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-  data &= ~0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-
-  data=0xC0;   //displayon
-  data|=0x08;
-  data|=0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-   data &= ~0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-
-  data=0x06;   //displayon
-  data|=0x08;
-  data|=0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-  data &= ~0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-
-  data=0x60;   //displayon
-    data|=0x08;
-    data|=0x04;
-    HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-    data &= ~0x04;
-    HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-
-  data=0x01;   //clear
-  data|=0x08;
-  data|=0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-  data &= ~0x04;
-  HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-
-  data=0x10;   //clear
-    data|=0x08;
-    data|=0x04;
-    HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-    data &= ~0x04;
-    HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-
-    HAL_Delay(2);
-
-
-    data = 0x49;          // 0x40 + RS + BL
-    data |= 0x04;         // EN = 1
-    HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-
-    data &= ~0x04;        // EN = 0
-    HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-
-    // Lower nibble = 0x1, RS = 1
-    data = 0x19;          // 0x10 + RS + BL
-    data |= 0x04;         // EN = 1
-    HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
-
-    data &= ~0x04;        // EN = 0
-    HAL_I2C_Master_Transmit(&hi2c2, PCF8574_add, &data, 1, HAL_MAX_DELAY);
 
 
   /* USER CODE END 2 */
