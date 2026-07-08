@@ -15,7 +15,7 @@
 void SendLCD(uint8_t byte, uint8_t rs);
 void LCD4BitSend(uint8_t data, uint8_t rs);
 void LCDInit();
-void PrintLCD();
-
+void PrintLCD(char *str);
+void LCD_SetCursor(uint8_t row, uint8_t col);
 
 #endif

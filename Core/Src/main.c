@@ -149,7 +149,9 @@ int main(void)
   uint8_t ad= 'A';
   printf("0x%02X\r\n", ad);
   LCDInit();
- // printf(a);
+  LCD_SetCursor(0, 0);
+  PrintLCD("hello");
+  HAL_Delay(1000);
 
 
   /* USER CODE END 2 */
@@ -159,9 +161,22 @@ int main(void)
   while (1)
   {
 
+	  char buf[16];
+	  int i=0;
+	  	  while(i<2000){
+	  		//printf("scren");
+	  		sprintf(buf, "%d", i);
+	  		LCD_SetCursor(0, 0);
+	  		  PrintLCD(buf);
+
+	  		  i++;
+	  	  }
     /* USER CODE END WHILE */
 
+
+
     /* USER CODE BEGIN 3 */
+//	  	printf("0x%02X\r\n", ad);
   }
   /* USER CODE END 3 */
 }
