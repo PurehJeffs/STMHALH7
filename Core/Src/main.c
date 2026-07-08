@@ -32,7 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define ADC_LEN 1000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -51,13 +51,15 @@ UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
 
+uint16_t adc_buf[ADC_LEN];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MPU_Config(void);
-static void MX_BDMA_Init(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_ADC3_Init(void);
 static void MX_USART3_UART_Init(void);
@@ -136,8 +138,8 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_BDMA_Init();
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_I2C2_Init();
   MX_ADC3_Init();
   MX_USART3_UART_Init();
@@ -151,8 +153,15 @@ int main(void)
   LCDInit();
   LCD_SetCursor(0, 0);
   PrintLCD("hello");
-  HAL_Delay(1000);
 
+  HAL_Delay(1000);
+//  HAL_ADC_Start_DMA(&hadc3, (uint32_t*)adc_buf, ADC_LEN);
+  HAL_StatusTypeDef status;
+
+  status = HAL_ADC_Start_DMA(&hadc3, (uint32_t *)adc_buf, ADC_LEN);
+  printf("ADC Start Status = %d\r\n", status);
+  printf("ADC Value = %u\r\n", adc_buf[0]);
+  SendLCD(LCDClear, 0);
 
   /* USER CODE END 2 */
 
@@ -164,16 +173,17 @@ int main(void)
 	  char buf[16];
 	  int i=0;
 	  	  while(i<2000){
-	  		//printf("scren");
-	  		sprintf(buf, "%d", i);
+	  		//printf("a");
+	  		sprintf(buf, "Pot: %d", adc_buf[0]);
 	  		LCD_SetCursor(0, 0);
-	  		  PrintLCD(buf);
+	  		PrintLCD(buf);
 
 	  		  i++;
+	  		  if(i==1000){
+	  			SendLCD(LCDClear, 0);
+	  		  }
 	  	  }
     /* USER CODE END WHILE */
-
-
 
     /* USER CODE BEGIN 3 */
 //	  	printf("0x%02X\r\n", ad);
@@ -274,7 +284,7 @@ static void MX_ADC3_Init(void)
   hadc3.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc3.Init.DMAContinuousRequests = ENABLE;
   hadc3.Init.SamplingMode = ADC_SAMPLING_MODE_NORMAL;
-  hadc3.Init.ConversionDataManagement = ADC_CONVERSIONDATA_DMA_ONESHOT;
+  hadc3.Init.ConversionDataManagement = ADC_CONVERSIONDATA_DMA_CIRCULAR;
   hadc3.Init.Overrun = ADC_OVR_DATA_PRESERVED;
   hadc3.Init.LeftBitShift = ADC_LEFTBITSHIFT_NONE;
   hadc3.Init.OversamplingMode = DISABLE;
@@ -402,16 +412,16 @@ static void MX_USART3_UART_Init(void)
 /**
   * Enable DMA controller clock
   */
-static void MX_BDMA_Init(void)
+static void MX_DMA_Init(void)
 {
 
   /* DMA controller clock enable */
-  __HAL_RCC_BDMA_CLK_ENABLE();
+  __HAL_RCC_DMA1_CLK_ENABLE();
 
   /* DMA interrupt init */
-  /* BDMA_Channel0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(BDMA_Channel0_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(BDMA_Channel0_IRQn);
+  /* DMA1_Stream0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
 
 }
 
