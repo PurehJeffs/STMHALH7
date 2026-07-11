@@ -21,8 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdio.h>
-#include "I2CLCD.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -69,6 +68,21 @@ static void MX_USART3_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void I2C_Scan(void)
+{
+    printf("Scanning I2C bus...\r\n");
+
+    for (uint8_t addr = 1; addr < 128; addr++)
+    {
+        if (HAL_I2C_IsDeviceReady(&hi2c2, addr << 1, 2, 10) == HAL_OK)
+        {
+            printf("Found device at 0x%02X\r\n", addr);
+        }
+    }
+
+    printf("Scan complete.\r\n");
+}
+
 
 int _write(int fd, char* ptr, int len){
 	HAL_StatusTypeDef hstatus;
@@ -162,7 +176,20 @@ int main(void)
   printf("ADC Start Status = %d\r\n", status);
   printf("ADC Value = %u\r\n", adc_buf[0]);
   SendLCD(LCDClear, 0);
-
+  I2C_Scan();
+  AS5600_HandleTypeDef encoder1;
+  AS5600_Init(&encoder1, &hi2c2, AS5600_ADDR, 0, 0, 0);
+  uint16_t currentAngle;
+  bool detect;
+  AS5600_Status_MagnetDetect(&encoder1, &detect);
+  if(detect){
+	  PrintLCD("Detected");
+  }
+  else{
+	  PrintLCD("Not Detected");
+  }
+  HAL_Delay(2000);
+  SendLCD(LCDClear, 0);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -173,11 +200,14 @@ int main(void)
 	  char buf[16];
 	  int i=0;
 	  	  while(i<2000){
+	  		AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
 	  		//printf("a");
 	  		sprintf(buf, "Pot: %d", adc_buf[0]);
 	  		LCD_SetCursor(0, 0);
 	  		PrintLCD(buf);
-
+	  		sprintf(buf, "Encoder: %d", currentAngle);
+	  		LCD_SetCursor(1, 0);
+	  		PrintLCD(buf);
 	  		  i++;
 	  		  if(i==1000){
 	  			SendLCD(LCDClear, 0);
@@ -190,6 +220,10 @@ int main(void)
   }
   /* USER CODE END 3 */
 }
+
+
+
+
 
 /**
   * @brief System Clock Configuration

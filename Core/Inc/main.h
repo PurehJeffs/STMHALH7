@@ -34,6 +34,11 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 extern I2C_HandleTypeDef hi2c2;
+
+#include <stdio.h>
+#include <stdbool.h>
+#include "I2CLCD.h"
+#include "AS5600.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
