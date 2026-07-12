@@ -12,7 +12,7 @@
 #define AS5600_ADDR 0x36
 
 //   Configuration Registers
-#define AS5600_ZMCO 0x00
+#define AS5600_ZMCO  0x00
 #define AS5600_ZPOS1 0x01
 #define AS5600_ZPOS2 0x02
 #define AS5600_MPOS1 0x03
@@ -25,12 +25,12 @@
 //     Output Registers
 #define AS5600_RAWANGLE1 0x0C
 #define AS5600_RAWANGLE2 0x0D
-#define AS5600_ANGLE1 0x0E
-#define AS5600_ANGLE2 0x0F
+#define AS5600_ANGLE1 	 0x0E
+#define AS5600_ANGLE2 	 0x0F
 
 //       Status Registers
-#define AS5600_STATUS 0x0B
-#define AS5600_AGC 0x1A
+#define AS5600_STATUS 	  0x0B
+#define AS5600_AGC 		  0x1A
 #define AS5600_MAGNITUDE1 0x1B
 #define AS5600_MAGNITUDE2 0x1C
 
