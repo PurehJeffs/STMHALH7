@@ -10,6 +10,8 @@
 #define INC_MPU6050_H_
 #include "main.h"
 
+
+#define MAINADDR 	0x68
 //       SELF TEST REGISTERS     ///
 #define SELF_TEST_X   0x0D    //XA 7-5   XG 4-0
 #define SELF_TEST_Y   0x0E
@@ -119,4 +121,23 @@
 #define EXT_SENS_DATA_23 0x60
 
 
+typedef struct
+{
+    I2C_HandleTypeDef *hi2c;
+    uint8_t addr;
+    uint8_t reg;
+    uint16_t XACCEL;
+    uint16_t YACCEL;
+    uint16_t ZACCEL;
+    uint16_t XGYRO;
+    uint16_t YGYRO;
+    uint16_t ZGYRO;
+
+} MPU6050_HandleTypeDef;
+
+void MPU6050CInit(MPU6050_HandleTypeDef *dev, I2C_HandleTypeDef *hi2c, uint8_t addr);
+void MPU6050Config();
+void MPU6050ReadGyro();
+HAL_StatusTypeDef MPU6050ReadAccel(MPU6050_HandleTypeDef *dev);
+void MPU6050ReadTemp();
 #endif /* INC_MPU6050_H_ */

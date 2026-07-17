@@ -177,11 +177,18 @@ int main(void)
   printf("ADC Value = %u\r\n", adc_buf[0]);
   SendLCD(LCDClear, 0);
   I2C_Scan();
+
+
   AS5600_HandleTypeDef encoder1;
+  MPU6050_HandleTypeDef MPU1;
+
+
+  MPU6050CInit(&MPU1, &hi2c2,MAINADDR);
   AS5600_Init(&encoder1, &hi2c2, AS5600_ADDR, 0, 0, 0);
   uint16_t currentAngle;
   bool detect;
   AS5600_Status_MagnetDetect(&encoder1, &detect);
+
   if(detect){
 	  PrintLCD("Detected");
   }
@@ -190,6 +197,7 @@ int main(void)
   }
   HAL_Delay(2000);
   SendLCD(LCDClear, 0);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -220,10 +228,6 @@ int main(void)
   }
   /* USER CODE END 3 */
 }
-
-
-
-
 
 /**
   * @brief System Clock Configuration
@@ -363,7 +367,7 @@ static void MX_I2C2_Init(void)
 
   /* USER CODE END I2C2_Init 1 */
   hi2c2.Instance = I2C2;
-  hi2c2.Init.Timing = 0xD0821A1F;
+  hi2c2.Init.Timing = 0x40300A1F;
   hi2c2.Init.OwnAddress1 = 0;
   hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c2.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;

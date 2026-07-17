@@ -39,6 +39,7 @@ extern I2C_HandleTypeDef hi2c2;
 #include <stdbool.h>
 #include "I2CLCD.h"
 #include "AS5600.h"
+#include "MPU6050.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
