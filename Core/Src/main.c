@@ -198,6 +198,7 @@ int main(void)
   HAL_Delay(2000);
   SendLCD(LCDClear, 0);
 
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -210,16 +211,24 @@ int main(void)
 	  	  while(i<2000){
 	  		AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
 	  		//printf("a");
+
 	  		sprintf(buf, "Pot: %d", adc_buf[0]);
 	  		LCD_SetCursor(0, 0);
 	  		PrintLCD(buf);
 	  		sprintf(buf, "Encoder: %d", currentAngle);
+	  		//printf("Encoder: %d\r\n",currentAngle);
 	  		LCD_SetCursor(1, 0);
 	  		PrintLCD(buf);
 	  		  i++;
 	  		  if(i==1000){
 	  			SendLCD(LCDClear, 0);
+
 	  		  }
+	  		if (i % 100 == 0)
+	  		{
+	  		    // Runs every 500 iterations
+	  			MPU6050ReadAccelGyro(&MPU1);
+	  		}
 	  	  }
     /* USER CODE END WHILE */
 
@@ -479,10 +488,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOG_CLK_ENABLE();
-  __HAL_RCC_GPIOE_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GreenLED_Pin|RedLED_Pin, GPIO_PIN_RESET);
@@ -508,6 +517,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : BournsEncA_Pin BournsEncB_Pin */
+  GPIO_InitStruct.Pin = BournsEncA_Pin|BournsEncB_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pin : ExtBut2_Pin */
   GPIO_InitStruct.Pin = ExtBut2_Pin;

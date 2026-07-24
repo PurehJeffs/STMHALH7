@@ -36,10 +36,12 @@ HAL_StatusTypeDef AS5600_Read(AS5600_HandleTypeDef *dev, uint8_t reg, uint16_t *
 
 HAL_StatusTypeDef AS5600_Write(AS5600_HandleTypeDef *dev){
 	HAL_StatusTypeDef status = HAL_OK;
+	return status;
 };
 
 HAL_StatusTypeDef AS5600_Config(AS5600_HandleTypeDef *dev){
 	HAL_StatusTypeDef status = HAL_OK;
+	return status;
 };
 
 //int AS5600_Status(AS5600_HandleTypeDef *dev, uint8_t reg, uint8_t statReg){

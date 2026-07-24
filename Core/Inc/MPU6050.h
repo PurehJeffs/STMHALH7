@@ -126,18 +126,18 @@ typedef struct
     I2C_HandleTypeDef *hi2c;
     uint8_t addr;
     uint8_t reg;
-    uint16_t XACCEL;
-    uint16_t YACCEL;
-    uint16_t ZACCEL;
-    uint16_t XGYRO;
-    uint16_t YGYRO;
-    uint16_t ZGYRO;
+    int16_t XACCEL;
+    int16_t YACCEL;
+    int16_t ZACCEL;
+    int16_t XGYRO;
+    int16_t YGYRO;
+    int16_t ZGYRO;
 
 } MPU6050_HandleTypeDef;
 
 void MPU6050CInit(MPU6050_HandleTypeDef *dev, I2C_HandleTypeDef *hi2c, uint8_t addr);
 void MPU6050Config();
 void MPU6050ReadGyro();
-HAL_StatusTypeDef MPU6050ReadAccel(MPU6050_HandleTypeDef *dev);
+HAL_StatusTypeDef MPU6050ReadAccelGyro(MPU6050_HandleTypeDef *dev);
 void MPU6050ReadTemp();
 #endif /* INC_MPU6050_H_ */

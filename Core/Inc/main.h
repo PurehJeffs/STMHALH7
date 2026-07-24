@@ -73,6 +73,10 @@ void Error_Handler(void);
 #define ExtBut_EXTI_IRQn EXTI3_IRQn
 #define GreenLED_Pin GPIO_PIN_0
 #define GreenLED_GPIO_Port GPIOB
+#define BournsEncA_Pin GPIO_PIN_9
+#define BournsEncA_GPIO_Port GPIOE
+#define BournsEncB_Pin GPIO_PIN_11
+#define BournsEncB_GPIO_Port GPIOE
 #define RedLED_Pin GPIO_PIN_14
 #define RedLED_GPIO_Port GPIOB
 #define SWDIO_Pin GPIO_PIN_13
