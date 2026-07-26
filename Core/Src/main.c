@@ -213,6 +213,7 @@ int main(void)
 	  		AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
 	  		//printf("a");
 	  		ReadEncPoll(&Bourns);
+
 	  		// printf("Bourns = %d\r\n", Bourns.Pos);
 	  		sprintf(buf, "Pot: %d", adc_buf[0]);
 	  		LCD_SetCursor(0, 0);
