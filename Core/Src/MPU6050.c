@@ -69,8 +69,8 @@ HAL_StatusTypeDef MPU6050ReadAccelGyro(MPU6050_HandleTypeDef *dev){
 					dev->YGYRO = (int16_t)(((uint16_t)data[10] << 8) | data[11]);
 					dev->ZGYRO = (int16_t)(((uint16_t)data[12] << 8) | data[13]);
 								}
-				printf("Za=%f  Ya=%f  Xa=%f  Zg=%f  Yg=%f  Xg=%f \r\n",((dev->ZACCEL)/8192.0f),((dev->YACCEL)/8192.0f),((dev->XACCEL)/8192.0f),
-																		((dev->ZGYRO)/65.5f),((dev->YGYRO)/65.5f),((dev->XGYRO)/65.5f));
+				//printf("Za=%f  Ya=%f  Xa=%f  Zg=%f  Yg=%f  Xg=%f \r\n",((dev->ZACCEL)/8192.0f),((dev->YACCEL)/8192.0f),((dev->XACCEL)/8192.0f),
+				//														((dev->ZGYRO)/65.5f),((dev->YGYRO)/65.5f),((dev->XGYRO)/65.5f));
 //				printf("%02X %02X %02X %02X %02X %02X\r\n",
 //				       (unsigned)data[0],
 //				       (unsigned)data[1],

@@ -178,7 +178,7 @@ int main(void)
   SendLCD(LCDClear, 0);
   I2C_Scan();
 
-
+  IncEnc_HandleTypeDef Bourns=TWOPINGPIO(BournsEncA_GPIO_Port,BournsEncA_Pin,BournsEncB_GPIO_Port,BournsEncB_Pin);
   AS5600_HandleTypeDef encoder1;
   MPU6050_HandleTypeDef MPU1;
 
@@ -208,10 +208,12 @@ int main(void)
 
 	  char buf[16];
 	  int i=0;
+	  ReadEnc(&Bourns);
 	  	  while(i<2000){
 	  		AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
 	  		//printf("a");
-
+	  		ReadEncPoll(&Bourns);
+	  		// printf("Bourns = %d\r\n", Bourns.Pos);
 	  		sprintf(buf, "Pot: %d", adc_buf[0]);
 	  		LCD_SetCursor(0, 0);
 	  		PrintLCD(buf);
