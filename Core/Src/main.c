@@ -64,6 +64,11 @@ static void MX_ADC3_Init(void);
 static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
+IncEnc_HandleTypeDef Bourns=EXTINT(BournsEncA_GPIO_Port,BournsEncA_Pin,BournsEncB_GPIO_Port,BournsEncB_Pin);
+AS5600_HandleTypeDef encoder1;
+MPU6050_HandleTypeDef MPU1;
+uint8_t A;
+uint8_t B;
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -104,20 +109,38 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     printf("Red\n\r");
 
   }
-  if(GPIO_Pin == GPIO_PIN_3) {
-	  HAL_GPIO_TogglePin(GreenLED_GPIO_Port, GreenLED_Pin);
-	  printf("Green\n\r");
-  }
+  if(GPIO_Pin == BournsEncB_Pin || GPIO_Pin == BournsEncA_Pin) {
+	  IncEncoder_EXTI(&Bourns);
 
-  if(GPIO_Pin == GPIO_PIN_12) {
- 	  HAL_GPIO_TogglePin(YellowLED_GPIO_Port, YellowLED_Pin);
- 	 printf("Yellow\n\r");
-   }
-  else{
+  }
+//  if(GPIO_Pin == BournsEncA_Pin)
+//   {
+//	  	A=HAL_GPIO_ReadPin(BournsEncA_GPIO_Port, BournsEncA_Pin);
+//	  	B=HAL_GPIO_ReadPin(BournsEncB_GPIO_Port, BournsEncB_Pin);
+//      // printf("A Trigger: %d%d\n\r",A,B);
+//      // IncEncoder_EXTI(&Bourns);
+//   }
+//
+//   if(GPIO_Pin == BournsEncB_Pin)
+//   {
+//	   B=HAL_GPIO_ReadPin(BournsEncB_GPIO_Port, BournsEncB_Pin);
+//	   A=HAL_GPIO_ReadPin(BournsEncA_GPIO_Port, BournsEncA_Pin);
+//
+//	   //printf("B Trigger: %d%d\n\r",A,B);
+//       //IncEncoder_EXTI(&Bourns);
+//   }
+
+
+
+//  if(GPIO_Pin == GPIO_PIN_12) {
+// 	  HAL_GPIO_TogglePin(YellowLED_GPIO_Port, YellowLED_Pin);
+// 	 printf("Yellow\n\r");
+//   }
+
 //	  	HAL_GPIO_WritePin(GreenLED_GPIO_Port, GreenLED_Pin, GPIO_PIN_RESET);
 //	    HAL_GPIO_WritePin(RedLED_GPIO_Port, RedLED_Pin, GPIO_PIN_RESET);
 //	    HAL_GPIO_WritePin(YellowLED_GPIO_Port, YellowLED_Pin, GPIO_PIN_RESET);
-  }
+
 }
 /* USER CODE END 0 */
 
@@ -168,6 +191,11 @@ int main(void)
   LCD_SetCursor(0, 0);
   PrintLCD("hello");
 
+  Bourns.PrevState =
+      (HAL_GPIO_ReadPin(Bourns.portA, Bourns.pinA) << 1) |
+       HAL_GPIO_ReadPin(Bourns.portB, Bourns.pinB);
+
+
   HAL_Delay(1000);
 //  HAL_ADC_Start_DMA(&hadc3, (uint32_t*)adc_buf, ADC_LEN);
   HAL_StatusTypeDef status;
@@ -178,9 +206,7 @@ int main(void)
   SendLCD(LCDClear, 0);
   I2C_Scan();
 
-  IncEnc_HandleTypeDef Bourns=TWOPINGPIO(BournsEncA_GPIO_Port,BournsEncA_Pin,BournsEncB_GPIO_Port,BournsEncB_Pin);
-  AS5600_HandleTypeDef encoder1;
-  MPU6050_HandleTypeDef MPU1;
+  //IncEnc_HandleTypeDef Bourns=TWOPINGPIO(BournsEncA_GPIO_Port,BournsEncA_Pin,BournsEncB_GPIO_Port,BournsEncB_Pin);
 
 
   MPU6050CInit(&MPU1, &hi2c2,MAINADDR);
@@ -205,34 +231,34 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-	  char buf[16];
-	  int i=0;
-	  ReadEnc(&Bourns);
-	  	  while(i<2000){
-	  		AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
-	  		//printf("a");
-	  		ReadEncPoll(&Bourns);
-
-	  		// printf("Bourns = %d\r\n", Bourns.Pos);
-	  		sprintf(buf, "Pot: %d", adc_buf[0]);
-	  		LCD_SetCursor(0, 0);
-	  		PrintLCD(buf);
-	  		sprintf(buf, "Encoder: %d", currentAngle);
-	  		//printf("Encoder: %d\r\n",currentAngle);
-	  		LCD_SetCursor(1, 0);
-	  		PrintLCD(buf);
-	  		  i++;
-	  		  if(i==1000){
-	  			SendLCD(LCDClear, 0);
-
-	  		  }
-	  		if (i % 100 == 0)
-	  		{
-	  		    // Runs every 500 iterations
-	  			MPU6050ReadAccelGyro(&MPU1);
-	  		}
-	  	  }
+	  printf("Encoder: %d\n\r",Bourns.Pos);
+//	  char buf[16];
+//	  int i=0;
+//
+//	  	  while(i<2000){
+//	  		AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
+//	  		//printf("a");
+//	  		//ReadEncPoll(&Bourns);
+//
+//	  		//printf("Bourns = %d\r\n", Bourns.Pos);
+//	  		sprintf(buf, "Pot: %d", adc_buf[0]);
+//	  		LCD_SetCursor(0, 0);
+//	  		PrintLCD(buf);
+//	  		sprintf(buf, "Encoder: %d", currentAngle);
+//	  		//printf("Encoder: %d\r\n",currentAngle);
+//	  		LCD_SetCursor(1, 0);
+//	  		PrintLCD(buf);
+//	  		  i++;
+//	  		  if(i==1000){
+//	  			SendLCD(LCDClear, 0);
+//
+//	  		  }
+//	  		if (i % 100 == 0)
+//	  		{
+//	  		    // Runs every 500 iterations
+//	  			MPU6050ReadAccelGyro(&MPU1);
+//	  		}
+//	  	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -523,8 +549,8 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : BournsEncA_Pin BournsEncB_Pin */
   GPIO_InitStruct.Pin = BournsEncA_Pin|BournsEncB_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pin : ExtBut2_Pin */
@@ -544,8 +570,11 @@ static void MX_GPIO_Init(void)
   HAL_NVIC_SetPriority(ExtBut_EXTI_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(ExtBut_EXTI_IRQn);
 
-  HAL_NVIC_SetPriority(ExtBut2_EXTI_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(ExtBut2_EXTI_IRQn);
+  HAL_NVIC_SetPriority(BournsEncA_EXTI_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(BournsEncA_EXTI_IRQn);
+
+  HAL_NVIC_SetPriority(BournsEncB_EXTI_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(BournsEncB_EXTI_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 

@@ -34,3 +34,28 @@ void ReadEncPoll(IncEnc_HandleTypeDef *dev)
 
     dev->EncA = currentA;
 };
+
+void IncEncoder_EXTI(IncEnc_HandleTypeDef *dev)
+{
+    uint8_t A = HAL_GPIO_ReadPin(dev->portA, dev->pinA);
+    uint8_t B = HAL_GPIO_ReadPin(dev->portB, dev->pinB);
+
+  //  printf("%d%d\r\n", A, B);
+
+    uint8_t currState = (A << 1) | B;
+
+    static const int8_t table[16] =
+    {
+         0, -1,  1,  0,
+         1,  0,  0, -1,
+        -1,  0,  0,  1,
+         0,  1, -1,  0
+    };
+
+    uint8_t index = (dev->PrevState << 2) | currState;
+
+    dev->Pos += table[index];
+
+    dev->PrevState = currState;
+
+}

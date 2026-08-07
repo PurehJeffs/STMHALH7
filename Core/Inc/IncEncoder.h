@@ -20,26 +20,29 @@ typedef struct{
 	GPIO_PinState EncA;
 	GPIO_PinState EncB;
 
-	int16_t Pos;
+	uint8_t PrevState;
+
+	volatile int16_t Pos;
 
 }IncEnc_HandleTypeDef;
 
 #define TWOPINGPIO(PortA,PinA,PortB,PinB) \
-{                                     \
-    .portA = (PortA),              \
-    .pinA = (PinA),                \
-	.portB = (PortB),              \
-	.pinB = (PinB),                 \
-	.Pos = 0               			  \
+{                                         \
+    .portA = (PortA),                     \
+    .pinA = (PinA),                       \
+	.portB = (PortB),                     \
+	.pinB = (PinB),                       \
+	.Pos = 0               		     	  \
 }
 
-#define TWOPININT(portA,pinA,portB,pinB) \
+#define EXTINT(PortA,PinA,PortB,PinB) \
 {                                     \
-    .DirPortA = (portA),              \
-    .DirPinA = (pinA),                \
-	.DirPortB = (portB),              \
-	.DirPinB = (pinB)                 \
-	.Pos = 0             			  \
+    .portA = (PortA),                 \
+    .pinA = (PinA),                   \
+	.portB = (PortB),                 \
+	.pinB = (PinB),                   \
+	.Pos = 0,                         \
+    .PrevState = 0                    \
 }
 
 //void ReadEnc(IncEnc_HandleTypeDef *dev){
@@ -50,5 +53,5 @@ typedef struct{
 //}
 
 void ReadEnc(IncEnc_HandleTypeDef *dev);
-
+void IncEncoder_EXTI(IncEnc_HandleTypeDef *dev);
 #endif /* INC_INCENCODER_H_ */
