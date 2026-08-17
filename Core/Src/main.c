@@ -185,25 +185,22 @@ int main(void)
   HAL_GPIO_WritePin(RedLED_GPIO_Port, RedLED_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(YellowLED_GPIO_Port, YellowLED_Pin, GPIO_PIN_SET);
   printf("first time baby\n\r");
-  uint8_t ad= 'A';
-  printf("0x%02X\r\n", ad);
-  LCDInit();
-  LCD_SetCursor(0, 0);
-  PrintLCD("hello");
+//  LCDInit();
+//  LCD_SetCursor(0, 0);
+//  PrintLCD("hello");
+//  SendLCD(LCDClear, 0);
 
   Bourns.PrevState =
       (HAL_GPIO_ReadPin(Bourns.portA, Bourns.pinA) << 1) |
        HAL_GPIO_ReadPin(Bourns.portB, Bourns.pinB);
 
-
-  HAL_Delay(1000);
 //  HAL_ADC_Start_DMA(&hadc3, (uint32_t*)adc_buf, ADC_LEN);
   HAL_StatusTypeDef status;
 
   status = HAL_ADC_Start_DMA(&hadc3, (uint32_t *)adc_buf, ADC_LEN);
   printf("ADC Start Status = %d\r\n", status);
   printf("ADC Value = %u\r\n", adc_buf[0]);
-  SendLCD(LCDClear, 0);
+
   I2C_Scan();
 
   //IncEnc_HandleTypeDef Bourns=TWOPINGPIO(BournsEncA_GPIO_Port,BournsEncA_Pin,BournsEncB_GPIO_Port,BournsEncB_Pin);
@@ -222,7 +219,7 @@ int main(void)
 	  PrintLCD("Not Detected");
   }
   HAL_Delay(2000);
-  SendLCD(LCDClear, 0);
+//  SendLCD(LCDClear, 0);
 
 
   /* USER CODE END 2 */
@@ -231,21 +228,20 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  printf("Encoder: %d\n\r",Bourns.Pos);
+
 //	  char buf[16];
 //	  int i=0;
-//
-//	  	  while(i<2000){
+
+	  AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
+	  printf("EncoderOp: %d\t EncoderMag: %d\t POT: %d\t",Bourns.Pos,currentAngle,adc_buf[0]);
+	  MPU6050ReadAccelGyro(&MPU1);
+//	  	  while(i<2000){\r\n
 //	  		AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
-//	  		//printf("a");
-//	  		//ReadEncPoll(&Bourns);
-//
-//	  		//printf("Bourns = %d\r\n", Bourns.Pos);
-//	  		sprintf(buf, "Pot: %d", adc_buf[0]);
+//	  		//printf("Encoder: %d\n\r",Bourns.Pos);
+//	  		sprintf(buf, "Pot: %d", Bourns.Pos);
 //	  		LCD_SetCursor(0, 0);
 //	  		PrintLCD(buf);
 //	  		sprintf(buf, "Encoder: %d", currentAngle);
-//	  		//printf("Encoder: %d\r\n",currentAngle);
 //	  		LCD_SetCursor(1, 0);
 //	  		PrintLCD(buf);
 //	  		  i++;
