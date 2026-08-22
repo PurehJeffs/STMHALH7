@@ -69,9 +69,9 @@ void Error_Handler(void);
 #define Button_Pin GPIO_PIN_13
 #define Button_GPIO_Port GPIOC
 #define Button_EXTI_IRQn EXTI15_10_IRQn
-#define ExtBut_Pin GPIO_PIN_3
-#define ExtBut_GPIO_Port GPIOF
-#define ExtBut_EXTI_IRQn EXTI3_IRQn
+#define EncMotorA_Pin GPIO_PIN_3
+#define EncMotorA_GPIO_Port GPIOF
+#define EncMotorA_EXTI_IRQn EXTI3_IRQn
 #define GreenLED_Pin GPIO_PIN_0
 #define GreenLED_GPIO_Port GPIOB
 #define BournsEncA_Pin GPIO_PIN_9
@@ -86,9 +86,9 @@ void Error_Handler(void);
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
-#define ExtBut2_Pin GPIO_PIN_12
-#define ExtBut2_GPIO_Port GPIOG
-#define ExtBut2_EXTI_IRQn EXTI15_10_IRQn
+#define EncMotorB_Pin GPIO_PIN_12
+#define EncMotorB_GPIO_Port GPIOG
+#define EncMotorB_EXTI_IRQn EXTI15_10_IRQn
 #define YellowLED_Pin GPIO_PIN_1
 #define YellowLED_GPIO_Port GPIOE
 

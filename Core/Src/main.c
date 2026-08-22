@@ -65,6 +65,7 @@ static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 IncEnc_HandleTypeDef Bourns=EXTINT(BournsEncA_GPIO_Port,BournsEncA_Pin,BournsEncB_GPIO_Port,BournsEncB_Pin);
+IncEnc_HandleTypeDef MotorEnc=EXTINT(EncMotorA_GPIO_Port,EncMotorA_Pin,EncMotorB_GPIO_Port,EncMotorB_Pin);
 AS5600_HandleTypeDef encoder1;
 MPU6050_HandleTypeDef MPU1;
 uint8_t A;
@@ -113,6 +114,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	  IncEncoder_EXTI(&Bourns);
 
   }
+
+  if(GPIO_Pin == EncMotorA_Pin || GPIO_Pin == EncMotorB_Pin) {
+  	  IncEncoder_EXTI(&MotorEnc);
+
+    }
+
+
 //  if(GPIO_Pin == BournsEncA_Pin)
 //   {
 //	  	A=HAL_GPIO_ReadPin(BournsEncA_GPIO_Port, BournsEncA_Pin);
@@ -132,10 +140,15 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 
 
-//  if(GPIO_Pin == GPIO_PIN_12) {
-// 	  HAL_GPIO_TogglePin(YellowLED_GPIO_Port, YellowLED_Pin);
+//  if(GPIO_Pin == EncMotorA_Pin) {
+//	  HAL_GPIO_TogglePin(YellowLED_GPIO_Port, YellowLED_Pin);
 // 	 printf("Yellow\n\r");
 //   }
+//
+//  if(GPIO_Pin == EncMotorB_Pin) {
+//	  HAL_GPIO_TogglePin(GreenLED_GPIO_Port, GreenLED_Pin);
+//  	 printf("Green\n\r");
+//    }
 
 //	  	HAL_GPIO_WritePin(GreenLED_GPIO_Port, GreenLED_Pin, GPIO_PIN_RESET);
 //	    HAL_GPIO_WritePin(RedLED_GPIO_Port, RedLED_Pin, GPIO_PIN_RESET);
@@ -213,10 +226,10 @@ int main(void)
   AS5600_Status_MagnetDetect(&encoder1, &detect);
 
   if(detect){
-	  PrintLCD("Detected");
+	  printf("Detected");
   }
   else{
-	  PrintLCD("Not Detected");
+	  printf("Not Detected");
   }
   HAL_Delay(2000);
 //  SendLCD(LCDClear, 0);
@@ -233,7 +246,7 @@ int main(void)
 //	  int i=0;
 
 	  AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
-	  printf("EncoderOp: %d\t EncoderMag: %d\t POT: %d\t",Bourns.Pos,currentAngle,adc_buf[0]);
+	  printf("EncoderOp: %d\t EncoderMag: %d\t EncoderMot: %d\t POT: %d\t",Bourns.Pos,currentAngle,MotorEnc.Pos,adc_buf[0]);
 	  MPU6050ReadAccelGyro(&MPU1);
 //	  	  while(i<2000){\r\n
 //	  		AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
@@ -530,11 +543,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(Button_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : ExtBut_Pin */
-  GPIO_InitStruct.Pin = ExtBut_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(ExtBut_GPIO_Port, &GPIO_InitStruct);
+  /*Configure GPIO pin : EncMotorA_Pin */
+  GPIO_InitStruct.Pin = EncMotorA_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  HAL_GPIO_Init(EncMotorA_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : GreenLED_Pin RedLED_Pin */
   GPIO_InitStruct.Pin = GreenLED_Pin|RedLED_Pin;
@@ -549,11 +562,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : ExtBut2_Pin */
-  GPIO_InitStruct.Pin = ExtBut2_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(ExtBut2_GPIO_Port, &GPIO_InitStruct);
+  /*Configure GPIO pin : EncMotorB_Pin */
+  GPIO_InitStruct.Pin = EncMotorB_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  HAL_GPIO_Init(EncMotorB_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : YellowLED_Pin */
   GPIO_InitStruct.Pin = YellowLED_Pin;
@@ -563,8 +576,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(YellowLED_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(ExtBut_EXTI_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(ExtBut_EXTI_IRQn);
+  HAL_NVIC_SetPriority(EncMotorA_EXTI_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EncMotorA_EXTI_IRQn);
 
   HAL_NVIC_SetPriority(BournsEncA_EXTI_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(BournsEncA_EXTI_IRQn);
