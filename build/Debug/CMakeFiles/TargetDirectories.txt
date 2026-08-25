@@ -1,0 +1,6 @@
+C:/Users/ubern/git/H7Hal/build/Debug/CMakeFiles/H7Hal.dir
+C:/Users/ubern/git/H7Hal/build/Debug/CMakeFiles/edit_cache.dir
+C:/Users/ubern/git/H7Hal/build/Debug/CMakeFiles/rebuild_cache.dir
+C:/Users/ubern/git/H7Hal/build/Debug/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir
+C:/Users/ubern/git/H7Hal/build/Debug/cmake/stm32cubemx/CMakeFiles/edit_cache.dir
+C:/Users/ubern/git/H7Hal/build/Debug/cmake/stm32cubemx/CMakeFiles/rebuild_cache.dir
