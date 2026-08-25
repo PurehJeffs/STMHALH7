@@ -201,7 +201,7 @@ int main(void)
   HAL_GPIO_WritePin(GreenLED_GPIO_Port, GreenLED_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(RedLED_GPIO_Port, RedLED_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(YellowLED_GPIO_Port, YellowLED_Pin, GPIO_PIN_SET);
-  printf("first time baby\n\r");
+  printf("VS CODE VERSION\n\r");
 //  LCDInit();
 //  LCD_SetCursor(0, 0);
 //  PrintLCD("hello");
