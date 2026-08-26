@@ -35,7 +35,7 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 73,
+				"line" : 74,
 				"parent" : 0
 			},
 			{
@@ -50,7 +50,7 @@
 			{
 				"command" : 3,
 				"file" : 0,
-				"line" : 54,
+				"line" : 55,
 				"parent" : 0
 			},
 			{
@@ -144,7 +144,8 @@
 				4,
 				6,
 				7,
-				8
+				8,
+				9
 			]
 		},
 		{
@@ -269,7 +270,8 @@
 				4,
 				6,
 				7,
-				8
+				8,
+				9
 			]
 		},
 		{
@@ -283,7 +285,6 @@
 			"name" : "Object Libraries",
 			"sourceIndexes" : 
 			[
-				9,
 				10,
 				11,
 				12,
@@ -310,7 +311,8 @@
 				33,
 				34,
 				35,
-				36
+				36,
+				37
 			]
 		}
 	],
@@ -368,6 +370,12 @@
 			"backtrace" : 7,
 			"compileGroupIndex" : 0,
 			"path" : "Core/Src/IncEncoder.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 7,
+			"compileGroupIndex" : 0,
+			"path" : "Core/Src/SPIEncoder.c",
 			"sourceGroupIndex" : 0
 		},
 		{

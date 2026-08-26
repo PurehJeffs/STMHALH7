@@ -41,6 +41,7 @@ extern I2C_HandleTypeDef hi2c2;
 #include "AS5600.h"
 #include "MPU6050.h"
 #include "IncEncoder.h"
+#include "SPIEncoder.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -80,10 +81,16 @@ void Error_Handler(void);
 #define BournsEncB_Pin GPIO_PIN_11
 #define BournsEncB_GPIO_Port GPIOE
 #define BournsEncB_EXTI_IRQn EXTI15_10_IRQn
+#define EMS22A_CLK_Pin GPIO_PIN_12
+#define EMS22A_CLK_GPIO_Port GPIOE
+#define EMS22A_MISO_Pin GPIO_PIN_13
+#define EMS22A_MISO_GPIO_Port GPIOE
+#define EMS22A_MOSI_Pin GPIO_PIN_14
+#define EMS22A_MOSI_GPIO_Port GPIOE
 #define RedLED_Pin GPIO_PIN_14
 #define RedLED_GPIO_Port GPIOB
-#define AS5048A_CS_Pin GPIO_PIN_14
-#define AS5048A_CS_GPIO_Port GPIOD
+#define EMS22_2_CS_Pin GPIO_PIN_14
+#define EMS22_2_CS_GPIO_Port GPIOD
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14

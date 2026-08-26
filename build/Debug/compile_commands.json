@@ -55,6 +55,12 @@
 },
 {
   "directory": "C:/Users/ubern/git/H7Hal/build/Debug",
+  "command": "C:\\Users\\ubern\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\bin\\arm-none-eabi-gcc.exe -DDEBUG -DSTM32H723xx -DUSE_HAL_DRIVER -DUSE_PWR_LDO_SUPPLY -IC:/Users/ubern/git/H7Hal/Core/Inc -IC:/Users/ubern/git/H7Hal/cmake/stm32cubemx/../../Core/Inc -IC:/Users/ubern/git/H7Hal/cmake/stm32cubemx/../../Drivers/STM32H7xx_HAL_Driver/Inc -IC:/Users/ubern/git/H7Hal/cmake/stm32cubemx/../../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -IC:/Users/ubern/git/H7Hal/cmake/stm32cubemx/../../Drivers/BSP/STM32H7xx_Nucleo -IC:/Users/ubern/git/H7Hal/cmake/stm32cubemx/../../Drivers/CMSIS/Device/ST/STM32H7xx/Include -IC:/Users/ubern/git/H7Hal/cmake/stm32cubemx/../../Drivers/CMSIS/Include  -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard  -Wall -fdata-sections -ffunction-sections -fstack-usage -O0 -g3 -std=gnu11 -o CMakeFiles\\H7Hal.dir\\Core\\Src\\SPIEncoder.c.obj -c C:\\Users\\ubern\\git\\H7Hal\\Core\\Src\\SPIEncoder.c",
+  "file": "C:\\Users\\ubern\\git\\H7Hal\\Core\\Src\\SPIEncoder.c",
+  "output": "CMakeFiles\\H7Hal.dir\\Core\\Src\\SPIEncoder.c.obj"
+},
+{
+  "directory": "C:/Users/ubern/git/H7Hal/build/Debug",
   "command": "C:\\Users\\ubern\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\bin\\arm-none-eabi-gcc.exe -DDEBUG -DSTM32H723xx -DUSE_HAL_DRIVER -DUSE_PWR_LDO_SUPPLY -IC:/Users/ubern/git/H7Hal/cmake/stm32cubemx/../../Core/Inc -IC:/Users/ubern/git/H7Hal/cmake/stm32cubemx/../../Drivers/STM32H7xx_HAL_Driver/Inc -IC:/Users/ubern/git/H7Hal/cmake/stm32cubemx/../../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -IC:/Users/ubern/git/H7Hal/cmake/stm32cubemx/../../Drivers/BSP/STM32H7xx_Nucleo -IC:/Users/ubern/git/H7Hal/cmake/stm32cubemx/../../Drivers/CMSIS/Device/ST/STM32H7xx/Include -IC:/Users/ubern/git/H7Hal/cmake/stm32cubemx/../../Drivers/CMSIS/Include  -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard  -Wall -fdata-sections -ffunction-sections -fstack-usage -O0 -g3 -std=gnu11 -o cmake\\stm32cubemx\\CMakeFiles\\STM32_Drivers.dir\\__\\__\\Core\\Src\\system_stm32h7xx.c.obj -c C:\\Users\\ubern\\git\\H7Hal\\Core\\Src\\system_stm32h7xx.c",
   "file": "C:\\Users\\ubern\\git\\H7Hal\\Core\\Src\\system_stm32h7xx.c",
   "output": "cmake\\stm32cubemx\\CMakeFiles\\STM32_Drivers.dir\\__\\__\\Core\\Src\\system_stm32h7xx.c.obj"

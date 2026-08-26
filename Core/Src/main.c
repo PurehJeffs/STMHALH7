@@ -91,7 +91,30 @@ void I2C_Scan(void)
 
     printf("Scan complete.\r\n");
 }
+uint16_t EMS22_2_ReadPosition(void)
+{
+    uint16_t raw;
+    uint16_t tx = 0x0000;
+    uint16_t rx = 0;
+    HAL_GPIO_WritePin(EMS22_2_CS_GPIO_Port,
+                      EMS22_2_CS_Pin,
+                      GPIO_PIN_RESET);
 
+    HAL_SPI_TransmitReceive(&hspi4,
+                        (uint8_t *)&tx,
+                        (uint8_t *)&rx,
+                        1,
+                        HAL_MAX_DELAY);
+                    
+
+    HAL_GPIO_WritePin(EMS22_2_CS_GPIO_Port,
+                      EMS22_2_CS_Pin,
+                      GPIO_PIN_SET);
+
+    uint16_t position = (rx >> 6) & 0x03FF;
+
+    printf("RAW: 0x%04X  Position: %u\r\n", rx, position);
+}
 
 int _write(int fd, char* ptr, int len){
 	HAL_StatusTypeDef hstatus;
@@ -248,10 +271,15 @@ int main(void)
 
 //	  char buf[16];
 //	  int i=0;
+    uint16_t position;
 
-	  AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
-	  printf("EncoderOp: %d\t EncoderMag: %d\t EncoderMot: %d\t POT: %d\t",Bourns.Pos,currentAngle,MotorEnc.Pos,adc_buf[0]);
-	  MPU6050ReadAccelGyro(&MPU1);
+    position = EMS22_2_ReadPosition();
+
+
+    //printf("Position: %u\r\n", position);
+	  // AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
+	  // printf("EncoderOp: %d\t EncoderMag: %d\t EncoderMot: %d\t POT: %d\t",Bourns.Pos,currentAngle,MotorEnc.Pos,adc_buf[0]);
+	  // MPU6050ReadAccelGyro(&MPU1);
 //	  	  while(i<2000){\r\n
 //	  		AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
 //	  		//printf("Encoder: %d\n\r",Bourns.Pos);
@@ -470,15 +498,15 @@ static void MX_SPI4_Init(void)
   hspi4.Init.Mode = SPI_MODE_MASTER;
   hspi4.Init.Direction = SPI_DIRECTION_2LINES;
   hspi4.Init.DataSize = SPI_DATASIZE_16BIT;
-  hspi4.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi4.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi4.Init.CLKPolarity = SPI_POLARITY_HIGH;
+  hspi4.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi4.Init.NSS = SPI_NSS_SOFT;
-  hspi4.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi4.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
   hspi4.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi4.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi4.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
   hspi4.Init.CRCPolynomial = 0x0;
-  hspi4.Init.NSSPMode = SPI_NSS_PULSE_ENABLE;
+  hspi4.Init.NSSPMode = SPI_NSS_PULSE_DISABLE;
   hspi4.Init.NSSPolarity = SPI_NSS_POLARITY_LOW;
   hspi4.Init.FifoThreshold = SPI_FIFO_THRESHOLD_01DATA;
   hspi4.Init.TxCRCInitializationPattern = SPI_CRC_INITIALIZATION_ALL_ZERO_PATTERN;
@@ -584,10 +612,13 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOG_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GreenLED_Pin|RedLED_Pin|EMS22_1_CS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GreenLED_Pin|RedLED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(AS5048A_CS_GPIO_Port, AS5048A_CS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(EMS22_2_CS_GPIO_Port, EMS22_2_CS_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(EMS22_1_CS_GPIO_Port, EMS22_1_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(YellowLED_GPIO_Port, YellowLED_Pin, GPIO_PIN_RESET);
@@ -617,12 +648,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : AS5048A_CS_Pin */
-  GPIO_InitStruct.Pin = AS5048A_CS_Pin;
+  /*Configure GPIO pin : EMS22_2_CS_Pin */
+  GPIO_InitStruct.Pin = EMS22_2_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(AS5048A_CS_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(EMS22_2_CS_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : EncMotorB_Pin */
   GPIO_InitStruct.Pin = EncMotorB_Pin;
