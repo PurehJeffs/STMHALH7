@@ -93,27 +93,43 @@ void I2C_Scan(void)
 }
 uint16_t EMS22_2_ReadPosition(void)
 {
-    uint16_t raw;
+
     uint16_t tx = 0x0000;
     uint16_t rx = 0;
     HAL_GPIO_WritePin(EMS22_2_CS_GPIO_Port,
                       EMS22_2_CS_Pin,
                       GPIO_PIN_RESET);
 
+      //for (volatile int i = 0; i < 100; i++);
+
     HAL_SPI_TransmitReceive(&hspi4,
                         (uint8_t *)&tx,
                         (uint8_t *)&rx,
                         1,
-                        HAL_MAX_DELAY);
-                    
+                        150);
+      
 
     HAL_GPIO_WritePin(EMS22_2_CS_GPIO_Port,
                       EMS22_2_CS_Pin,
                       GPIO_PIN_SET);
+      //uint16_t corrected = rx >> 1;
+      
+      uint16_t position = rx & 0xFFC0;
+      position = (position >> 6);
+      position = (position << 1);
+      //position = (360 * position) / 1024;
+    //uint16_t position = (rx >> 6) & 0x03FF;
 
-    uint16_t position = (rx >> 6) & 0x03FF;
+    //printf("RAW: 0x%04X  Position: %u\r\n", rx, position);
+    printf("RAW: 0x%04X Position: %u Binary: ", rx, position);
 
-    printf("RAW: 0x%04X  Position: %u\r\n", rx, position);
+    for (int i = 15; i >= 0; i--)
+    {
+        printf("%d", (rx >> i) & 1);
+    }
+
+    printf("\r\n");
+    return rx;
 }
 
 int _write(int fd, char* ptr, int len){
@@ -266,19 +282,20 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint16_t position;
   while (1)
   {
 
 //	  char buf[16];
 //	  int i=0;
-    uint16_t position;
+    
 
     position = EMS22_2_ReadPosition();
 
 
     //printf("Position: %u\r\n", position);
 	  // AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
-	  // printf("EncoderOp: %d\t EncoderMag: %d\t EncoderMot: %d\t POT: %d\t",Bourns.Pos,currentAngle,MotorEnc.Pos,adc_buf[0]);
+	  // printf("EncoderAbs: %d\t EncoderOp: %d\t EncoderMag: %d\t EncoderMot: %d\t POT: %d\t",position,Bourns.Pos,currentAngle,MotorEnc.Pos,adc_buf[0]);
 	  // MPU6050ReadAccelGyro(&MPU1);
 //	  	  while(i<2000){\r\n
 //	  		AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
@@ -323,7 +340,7 @@ void SystemClock_Config(void)
 
   /** Configure the main internal regulator output voltage
   */
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE0);
 
   while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
 
@@ -336,13 +353,13 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 12;
+  RCC_OscInitStruct.PLL.PLLN = 34;
   RCC_OscInitStruct.PLL.PLLP = 1;
   RCC_OscInitStruct.PLL.PLLQ = 4;
   RCC_OscInitStruct.PLL.PLLR = 2;
   RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
-  RCC_OscInitStruct.PLL.PLLFRACN = 0;
+  RCC_OscInitStruct.PLL.PLLFRACN = 3072;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -355,13 +372,13 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_D3PCLK1|RCC_CLOCKTYPE_D1PCLK1;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB3CLKDivider = RCC_APB3_DIV2;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;
   RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
     Error_Handler();
   }
@@ -446,7 +463,7 @@ static void MX_I2C2_Init(void)
 
   /* USER CODE END I2C2_Init 1 */
   hi2c2.Instance = I2C2;
-  hi2c2.Init.Timing = 0x40300A1F;
+  hi2c2.Init.Timing = 0x10D02475;
   hi2c2.Init.OwnAddress1 = 0;
   hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c2.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
