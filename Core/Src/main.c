@@ -71,6 +71,7 @@ IncEnc_HandleTypeDef Bourns=EXTINT(BournsEncA_GPIO_Port,BournsEncA_Pin,BournsEnc
 IncEnc_HandleTypeDef MotorEnc=EXTINT(EncMotorA_GPIO_Port,EncMotorA_Pin,EncMotorB_GPIO_Port,EncMotorB_Pin);
 AS5600_HandleTypeDef encoder1;
 MPU6050_HandleTypeDef MPU1;
+SPI_Encoder_HandleTypeDef EMS22_2;
 uint8_t A;
 uint8_t B;
 /* USER CODE END PFP */
@@ -94,42 +95,40 @@ void I2C_Scan(void)
 uint16_t EMS22_2_ReadPosition(void)
 {
 
-    uint16_t tx = 0x0000;
-    uint16_t rx = 0;
+    uint16_t tx[2] = {0x0000,0x0000};
+    uint16_t rx[2] = {0,0};
     HAL_GPIO_WritePin(EMS22_2_CS_GPIO_Port,
                       EMS22_2_CS_Pin,
                       GPIO_PIN_RESET);
 
-      //for (volatile int i = 0; i < 100; i++);
-
     HAL_SPI_TransmitReceive(&hspi4,
                         (uint8_t *)&tx,
                         (uint8_t *)&rx,
-                        1,
+                        2,
                         150);
       
 
     HAL_GPIO_WritePin(EMS22_2_CS_GPIO_Port,
                       EMS22_2_CS_Pin,
                       GPIO_PIN_SET);
-      //uint16_t corrected = rx >> 1;
-      
-      uint16_t position = rx & 0xFFC0;
-      position = (position >> 6);
-      position = (position << 1);
-      //position = (360 * position) / 1024;
-    //uint16_t position = (rx >> 6) & 0x03FF;
 
-    //printf("RAW: 0x%04X  Position: %u\r\n", rx, position);
-    printf("RAW: 0x%04X Position: %u Binary: ", rx, position);
+      uint16_t position = rx[0] & 0x7FE0;//0xFFE0
+      uint16_t position2 = rx[1] & 0x3FF0;
+      position = (position >> 5);
+      position2 = (position2 >> 4);
+
+    printf("RAW1: 0x%04X Position1: %u RAW2: 0x%04X Position2: %u Binary: ", rx[0], position, rx[1], position2);
 
     for (int i = 15; i >= 0; i--)
     {
-        printf("%d", (rx >> i) & 1);
+        printf("%d", (rx[0] >> i) & 1);
     }
-
+    for (int i = 15; i >= 0; i--)
+    {
+        printf("%d", (rx[1] >> i) & 1);
+    }
     printf("\r\n");
-    return rx;
+    return rx[0];
 }
 
 int _write(int fd, char* ptr, int len){
@@ -260,7 +259,7 @@ int main(void)
   I2C_Scan();
 
   //IncEnc_HandleTypeDef Bourns=TWOPINGPIO(BournsEncA_GPIO_Port,BournsEncA_Pin,BournsEncB_GPIO_Port,BournsEncB_Pin);
-
+  Bourns_Encoder_Init(&EMS22_2, &hspi4, EMS22_2_CS_GPIO_Port, EMS22_2_CS_Pin, 2);
 
   MPU6050CInit(&MPU1, &hi2c2,MAINADDR);
   AS5600_Init(&encoder1, &hi2c2, AS5600_ADDR, 0, 0, 0);
@@ -282,15 +281,15 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint16_t position;
+
   while (1)
   {
-
+      Bourns_Encoder_ReadAll(&EMS22_2);
+      printf("Position1: %u Position2: %u \r\n", EMS22_2.data[0], EMS22_2.data[1]);
 //	  char buf[16];
 //	  int i=0;
     
 
-    position = EMS22_2_ReadPosition();
 
 
     //printf("Position: %u\r\n", position);
