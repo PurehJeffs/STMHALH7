@@ -99,8 +99,8 @@ void Error_Handler(void);
 #define EncMotorB_Pin GPIO_PIN_12
 #define EncMotorB_GPIO_Port GPIOG
 #define EncMotorB_EXTI_IRQn EXTI15_10_IRQn
-#define EMS22_1_CS_Pin GPIO_PIN_5
-#define EMS22_1_CS_GPIO_Port GPIOB
+#define AS5048A_CS_Pin GPIO_PIN_9
+#define AS5048A_CS_GPIO_Port GPIOB
 #define YellowLED_Pin GPIO_PIN_1
 #define YellowLED_GPIO_Port GPIOE
 

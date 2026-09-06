@@ -3,7 +3,7 @@ C:/Users/ubern/git/H7Hal/Core/Src/stm32h7xx_hal_msp.c:85:6:HAL_ADC_MspInit	232	s
 C:/Users/ubern/git/H7Hal/Core/Src/stm32h7xx_hal_msp.c:160:6:HAL_ADC_MspDeInit	16	static
 C:/Users/ubern/git/H7Hal/Core/Src/stm32h7xx_hal_msp.c:193:6:HAL_I2C_MspInit	232	static
 C:/Users/ubern/git/H7Hal/Core/Src/stm32h7xx_hal_msp.c:240:6:HAL_I2C_MspDeInit	16	static
-C:/Users/ubern/git/H7Hal/Core/Src/stm32h7xx_hal_msp.c:271:6:HAL_SPI_MspInit	232	static
-C:/Users/ubern/git/H7Hal/Core/Src/stm32h7xx_hal_msp.c:320:6:HAL_SPI_MspDeInit	16	static
-C:/Users/ubern/git/H7Hal/Core/Src/stm32h7xx_hal_msp.c:350:6:HAL_UART_MspInit	232	static
-C:/Users/ubern/git/H7Hal/Core/Src/stm32h7xx_hal_msp.c:398:6:HAL_UART_MspDeInit	16	static
+C:/Users/ubern/git/H7Hal/Core/Src/stm32h7xx_hal_msp.c:271:6:HAL_SPI_MspInit	248	static
+C:/Users/ubern/git/H7Hal/Core/Src/stm32h7xx_hal_msp.c:362:6:HAL_SPI_MspDeInit	16	static
+C:/Users/ubern/git/H7Hal/Core/Src/stm32h7xx_hal_msp.c:413:6:HAL_UART_MspInit	232	static
+C:/Users/ubern/git/H7Hal/Core/Src/stm32h7xx_hal_msp.c:461:6:HAL_UART_MspDeInit	16	static

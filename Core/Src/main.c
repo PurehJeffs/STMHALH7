@@ -46,6 +46,7 @@ DMA_HandleTypeDef hdma_adc3;
 
 I2C_HandleTypeDef hi2c2;
 
+SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi4;
 
 UART_HandleTypeDef huart3;
@@ -65,6 +66,7 @@ static void MX_I2C2_Init(void);
 static void MX_ADC3_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_SPI4_Init(void);
+static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
 
 IncEnc_HandleTypeDef Bourns=EXTINT(BournsEncA_GPIO_Port,BournsEncA_Pin,BournsEncB_GPIO_Port,BournsEncB_Pin);
@@ -130,6 +132,46 @@ uint16_t EMS22_2_ReadPosition(void)
     printf("\r\n");
     return rx[0];
 }
+
+
+uint16_t AS5048A_ReadPosition(void)
+{
+
+    uint16_t tx= 0xFFFF;
+    uint16_t rx;
+    HAL_GPIO_WritePin(AS5048A_CS_GPIO_Port,
+                      AS5048A_CS_Pin,
+                      GPIO_PIN_RESET);
+
+    HAL_SPI_TransmitReceive(&hspi1,
+                        (uint8_t *)&tx,
+                        (uint8_t *)&rx,
+                        1,
+                        HAL_MAX_DELAY);
+      
+
+    HAL_GPIO_WritePin(AS5048A_CS_GPIO_Port,
+                      AS5048A_CS_Pin,
+                      GPIO_PIN_SET);
+
+    
+    for (int i = 15; i >= 0; i--)
+    {
+        printf("%d ", (rx >> i) & 1);
+    }
+    rx = rx & 0x3FFF;
+
+    for (int i = 15; i >= 0; i--)
+    {
+        printf("%d ", (rx >> i) & 1);
+    }
+
+    //printf("\r\n");
+    return rx;
+
+  
+}
+
 
 int _write(int fd, char* ptr, int len){
 	HAL_StatusTypeDef hstatus;
@@ -235,6 +277,7 @@ int main(void)
   MX_ADC3_Init();
   MX_USART3_UART_Init();
   MX_SPI4_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   HAL_GPIO_WritePin(GreenLED_GPIO_Port, GreenLED_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(RedLED_GPIO_Port, RedLED_Pin, GPIO_PIN_SET);
@@ -284,8 +327,10 @@ int main(void)
 
   while (1)
   {
-      Bourns_Encoder_ReadAll(&EMS22_2);
-      printf("Position1: %u Position2: %u \r\n", EMS22_2.data[0], EMS22_2.data[1]);
+    //  Bourns_Encoder_ReadAll(&EMS22_2);
+    //   printf("Position1: %u Position2: %u \r\n", EMS22_2.data[0], EMS22_2.data[1]);
+     currentAngle = AS5048A_ReadPosition();
+     printf("AS5048A Position: %f\r\n", currentAngle/45.508f);
 //	  char buf[16];
 //	  int i=0;
     
@@ -495,6 +540,54 @@ static void MX_I2C2_Init(void)
 }
 
 /**
+  * @brief SPI1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI1_Init(void)
+{
+
+  /* USER CODE BEGIN SPI1_Init 0 */
+
+  /* USER CODE END SPI1_Init 0 */
+
+  /* USER CODE BEGIN SPI1_Init 1 */
+
+  /* USER CODE END SPI1_Init 1 */
+  /* SPI1 parameter configuration*/
+  hspi1.Instance = SPI1;
+  hspi1.Init.Mode = SPI_MODE_MASTER;
+  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi1.Init.DataSize = SPI_DATASIZE_16BIT;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi1.Init.CLKPhase = SPI_PHASE_2EDGE;
+  hspi1.Init.NSS = SPI_NSS_SOFT;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
+  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi1.Init.CRCPolynomial = 0x0;
+  hspi1.Init.NSSPMode = SPI_NSS_PULSE_DISABLE;
+  hspi1.Init.NSSPolarity = SPI_NSS_POLARITY_LOW;
+  hspi1.Init.FifoThreshold = SPI_FIFO_THRESHOLD_01DATA;
+  hspi1.Init.TxCRCInitializationPattern = SPI_CRC_INITIALIZATION_ALL_ZERO_PATTERN;
+  hspi1.Init.RxCRCInitializationPattern = SPI_CRC_INITIALIZATION_ALL_ZERO_PATTERN;
+  hspi1.Init.MasterSSIdleness = SPI_MASTER_SS_IDLENESS_00CYCLE;
+  hspi1.Init.MasterInterDataIdleness = SPI_MASTER_INTERDATA_IDLENESS_00CYCLE;
+  hspi1.Init.MasterReceiverAutoSusp = SPI_MASTER_RX_AUTOSUSP_DISABLE;
+  hspi1.Init.MasterKeepIOState = SPI_MASTER_KEEP_IO_STATE_ENABLE;
+  hspi1.Init.IOSwap = SPI_IO_SWAP_DISABLE;
+  if (HAL_SPI_Init(&hspi1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI1_Init 2 */
+
+  /* USER CODE END SPI1_Init 2 */
+
+}
+
+/**
   * @brief SPI4 Initialization Function
   * @param None
   * @retval None
@@ -530,7 +623,7 @@ static void MX_SPI4_Init(void)
   hspi4.Init.MasterSSIdleness = SPI_MASTER_SS_IDLENESS_00CYCLE;
   hspi4.Init.MasterInterDataIdleness = SPI_MASTER_INTERDATA_IDLENESS_00CYCLE;
   hspi4.Init.MasterReceiverAutoSusp = SPI_MASTER_RX_AUTOSUSP_DISABLE;
-  hspi4.Init.MasterKeepIOState = SPI_MASTER_KEEP_IO_STATE_DISABLE;
+  hspi4.Init.MasterKeepIOState = SPI_MASTER_KEEP_IO_STATE_ENABLE;
   hspi4.Init.IOSwap = SPI_IO_SWAP_DISABLE;
   if (HAL_SPI_Init(&hspi4) != HAL_OK)
   {
@@ -621,10 +714,10 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOF_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOG_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
@@ -634,7 +727,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(EMS22_2_CS_GPIO_Port, EMS22_2_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(EMS22_1_CS_GPIO_Port, EMS22_1_CS_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(AS5048A_CS_GPIO_Port, AS5048A_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(YellowLED_GPIO_Port, YellowLED_Pin, GPIO_PIN_RESET);
@@ -651,8 +744,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(EncMotorA_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : GreenLED_Pin RedLED_Pin EMS22_1_CS_Pin */
-  GPIO_InitStruct.Pin = GreenLED_Pin|RedLED_Pin|EMS22_1_CS_Pin;
+  /*Configure GPIO pins : GreenLED_Pin RedLED_Pin AS5048A_CS_Pin */
+  GPIO_InitStruct.Pin = GreenLED_Pin|RedLED_Pin|AS5048A_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
