@@ -60,6 +60,8 @@ extern I2C_HandleTypeDef hi2c2;
 
 /* USER CODE END EM */
 
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -90,8 +92,14 @@ void Error_Handler(void);
 #define EMS22A_MOSI_GPIO_Port GPIOE
 #define RedLED_Pin GPIO_PIN_14
 #define RedLED_GPIO_Port GPIOB
+#define MotorIN2_Pin GPIO_PIN_15
+#define MotorIN2_GPIO_Port GPIOB
 #define EMS22_2_CS_Pin GPIO_PIN_14
 #define EMS22_2_CS_GPIO_Port GPIOD
+#define MotorSTBY_Pin GPIO_PIN_15
+#define MotorSTBY_GPIO_Port GPIOD
+#define MotorIN1_Pin GPIO_PIN_6
+#define MotorIN1_GPIO_Port GPIOC
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
@@ -99,6 +107,8 @@ void Error_Handler(void);
 #define EncMotorB_Pin GPIO_PIN_12
 #define EncMotorB_GPIO_Port GPIOG
 #define EncMotorB_EXTI_IRQn EXTI15_10_IRQn
+#define MotorPWM_Pin GPIO_PIN_8
+#define MotorPWM_GPIO_Port GPIOB
 #define AS5048A_CS_Pin GPIO_PIN_9
 #define AS5048A_CS_GPIO_Port GPIOB
 #define YellowLED_Pin GPIO_PIN_1
