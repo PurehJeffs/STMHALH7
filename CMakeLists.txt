@@ -49,6 +49,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Src/MPU6050.c
     Core/Src/IncEncoder.c
     Core/Src/SPIEncoder.c
+    Core/Src/PID.c
 )
 
 # Add include paths

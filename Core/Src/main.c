@@ -18,7 +18,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stm32h7xx_hal_tim.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -80,6 +82,19 @@ MPU6050_HandleTypeDef MPU1;
 SPI_Encoder_HandleTypeDef EMS22_2;
 uint8_t A;
 uint8_t B;
+
+PIDController PID1 = {
+    .Kp = 1.0f,
+    .Ki = 0.5f,
+    .Kd = 0.02f,
+    .tau = 0.02f,
+    .limMin = -1000.0f,
+    .limMax = 1000.0f,
+    .limMinInt = -300.0f,
+    .limMaxInt = 2300.0f,
+    .T = 0.01f, // Sample time in seconds
+};
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -137,6 +152,20 @@ uint16_t EMS22_2_ReadPosition(void)
     return rx[0];
 }
 
+void SWO_Init(void)
+{
+    /* Enable trace */
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+
+    /* Unlock ITM */
+    ITM->LAR = 0xC5ACCE55;
+
+    /* Enable ITM */
+    ITM->TCR = ITM_TCR_ITMENA_Msk;
+
+    /* Enable stimulus port 0 */
+    ITM->TER = (1UL << 0);
+}
 
 uint16_t AS5048A_ReadPosition(void)
 {
@@ -284,9 +313,11 @@ int main(void)
   MX_SPI1_Init();
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
+  SWO_Init();
   HAL_GPIO_WritePin(GreenLED_GPIO_Port, GreenLED_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(RedLED_GPIO_Port, RedLED_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(YellowLED_GPIO_Port, YellowLED_Pin, GPIO_PIN_SET);
+
   HAL_GPIO_WritePin(MotorSTBY_GPIO_Port, MotorSTBY_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(MotorIN1_GPIO_Port, MotorIN1_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(MotorIN2_GPIO_Port, MotorIN2_Pin, GPIO_PIN_SET);
@@ -294,8 +325,8 @@ int main(void)
 
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
 
-  __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, 1000);
-
+ // __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, 500);
+  
   Bourns.PrevState =
       (HAL_GPIO_ReadPin(Bourns.portA, Bourns.pinA) << 1) |
        HAL_GPIO_ReadPin(Bourns.portB, Bourns.pinB);
@@ -308,7 +339,7 @@ int main(void)
   printf("ADC Value = %u\r\n", adc_buf[0]);
 
   I2C_Scan();
-
+  PIDController_Init(&PID1);
   //IncEnc_HandleTypeDef Bourns=TWOPINGPIO(BournsEncA_GPIO_Port,BournsEncA_Pin,BournsEncB_GPIO_Port,BournsEncB_Pin);
   Bourns_Encoder_Init(&EMS22_2, &hspi4, EMS22_2_CS_GPIO_Port, EMS22_2_CS_Pin, 2);
 
@@ -334,39 +365,46 @@ int main(void)
 
   while (1)
   {
-    AS5048AAngle = AS5048A_ReadPosition();
-    printf("AS5048A Position: %f ", AS5048AAngle/45.508f);
-    Bourns_Encoder_ReadAll(&EMS22_2);
-    printf("Position1: %u Position2: %u ", EMS22_2.data[0], EMS22_2.data[1]);
-    //printf("Position: %u\r\n", position);
-	  AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
-	  printf("EncoderAbs: %d EncoderMag: %d EncoderMot: %d POT: %d",Bourns.Pos,currentAngle,MotorEnc.Pos,adc_buf[0]);
-    MPU6050ReadAccelGyro(&MPU1);
-	  // 
-//	  	  while(i<2000){\r\n
-//	  		AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
-//	  		//printf("Encoder: %d\n\r",Bourns.Pos);
-//	  		sprintf(buf, "Pot: %d", Bourns.Pos);
-//	  		LCD_SetCursor(0, 0);
-//	  		PrintLCD(buf);
-//	  		sprintf(buf, "Encoder: %d", currentAngle);
-//	  		LCD_SetCursor(1, 0);
-//	  		PrintLCD(buf);
-//	  		  i++;
-//	  		  if(i==1000){
-//	  			SendLCD(LCDClear, 0);
-//
-//	  		  }
-//	  		if (i % 100 == 0)
-//	  		{
-//	  		    // Runs every 500 iterations
-//	  			MPU6050ReadAccelGyro(&MPU1);
-//	  		}
-//	  	  }
+  
+    // AS5048AAngle = AS5048A_ReadPosition();
+    // printf("AS5048A Position: %f ", AS5048AAngle/45.508f);
+    // Bourns_Encoder_ReadAll(&EMS22_2);
+    // printf("Position1: %u Position2: %u ", EMS22_2.data[0], EMS22_2.data[1]);
+    // //printf("Position: %u\r\n", position);
+	  // AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
+	  // printf("EncoderAbs: %d EncoderMag: %d EncoderMot: %d POT: %d",Bourns.Pos,currentAngle,MotorEnc.Pos,adc_buf[0]);
+    // MPU6050ReadAccelGyro(&MPU1);
+    // printf("Za: %f  Ya: %f  Xa: %f  Zg: %f  Yg: %f  Xg: %f",((MPU1.ZACCEL)/8192.0f),((MPU1.YACCEL)/8192.0f),((MPU1.XACCEL)/8192.0f),
+    // 														((MPU1.ZGYRO)/65.5f),((MPU1.YGYRO)/65.5f),((MPU1.XGYRO)/65.5f));
+    // printf("\r\n");
+    
+    
+    
+
+    if(((Bourns.Pos - MotorEnc.Pos)<= 30) && ((Bourns.Pos - MotorEnc.Pos) >= -30)){
+    	__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, 0);
+      printf("a");
+    }
+
+    else{
+      PIDController_Update(&PID1, (float)MotorEnc.Pos, Bourns.Pos);
+      if(PID1.out > 0.0f){
+        HAL_GPIO_WritePin(MotorIN1_GPIO_Port, MotorIN1_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(MotorIN2_GPIO_Port, MotorIN2_Pin, GPIO_PIN_SET);
+      }
+      else{
+        HAL_GPIO_WritePin(MotorIN1_GPIO_Port, MotorIN1_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(MotorIN2_GPIO_Port, MotorIN2_Pin, GPIO_PIN_RESET);
+      }
+    	__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, fabsf(PID1.out));
+    }
+
+    printf("Target: %d Error: %d EncoderMot: %d pidOut: %f", Bourns.Pos, Bourns.Pos - MotorEnc.Pos, MotorEnc.Pos, PID1.out);
+    printf("\r\n");
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//	  	printf("0x%02X\r\n", ad);
+
   }
   /* USER CODE END 3 */
 }
