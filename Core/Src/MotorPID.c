@@ -1,4 +1,4 @@
-#include "PID.h"
+#include "MotorPID.h"
 
 void PIDController_Init(PIDController *pid) {
 
@@ -15,21 +15,17 @@ void PIDController_Init(PIDController *pid) {
 
 float PIDController_Update(PIDController *pid, float setpoint, float measurement) {
 
-	/*
-	* Error signal
-	*/
+
+	// Error signal
+
     float error = setpoint - measurement;
 
-
-	/*
-	* Proportional
-	*/
+	//Proportional
+	
     float proportional = pid->Kp * error;
 
-
-	/*
-	* Integral
-	*/
+	// Integral
+	
     pid->integrator = pid->integrator + 0.5f * pid->Ki * pid->T * (error + pid->prevError);
 
 	/* Anti-wind-up via integrator clamping */
@@ -43,19 +39,14 @@ float PIDController_Update(PIDController *pid, float setpoint, float measurement
 
     }
 
-
-	/*
-	* Derivative (band-limited differentiator)
-	*/
+	// Derivative (band-limited differentiator)
 		
     pid->differentiator = -(2.0f * pid->Kd * (measurement - pid->prevMeasurement)	/* Note: derivative on measurement, therefore minus sign in front of equation! */
                         + (2.0f * pid->tau - pid->T) * pid->differentiator)
                         / (2.0f * pid->tau + pid->T);
 
+//Compute output and apply limits
 
-	/*
-	* Compute output and apply limits
-	*/
     pid->out = proportional + pid->integrator + pid->differentiator;
 
     if (pid->out > pid->limMax) {
@@ -75,4 +66,27 @@ float PIDController_Update(PIDController *pid, float setpoint, float measurement
 	/* Return controller output */
     return pid->out;
 
+}
+
+void  DCMotor_PID(PIDController *pid, PIDDCMotor_HandleTypeDef *motor, float setpoint, float measurement)  {
+
+	float pidOutput = PIDController_Update(pid, setpoint, measurement);
+
+	if(((measurement - setpoint)<= 10) && ((measurement - setpoint) >= -10)){
+    	__HAL_TIM_SET_COMPARE(motor->htim, motor->channel, 0);
+    }
+	else{
+		if (pidOutput > 0.0f) {
+
+		HAL_GPIO_WritePin(motor->In1Port, motor->In1Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(motor->In2Port, motor->In2Pin, GPIO_PIN_RESET);
+		} 
+		else {
+
+			HAL_GPIO_WritePin(motor->In1Port, motor->In1Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(motor->In2Port, motor->In2Pin, GPIO_PIN_SET);
+		}
+		__HAL_TIM_SET_COMPARE(motor->htim, motor->channel, fabsf(pidOutput));
+	}
+	
 }

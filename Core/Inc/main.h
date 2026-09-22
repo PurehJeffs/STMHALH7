@@ -43,7 +43,7 @@ extern I2C_HandleTypeDef hi2c2;
 #include "MPU6050.h"
 #include "IncEncoder.h"
 #include "SPIEncoder.h"
-#include "PID.h"
+#include "MotorPID.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -77,6 +77,8 @@ void Error_Handler(void);
 #define EncMotorA_Pin GPIO_PIN_3
 #define EncMotorA_GPIO_Port GPIOF
 #define EncMotorA_EXTI_IRQn EXTI3_IRQn
+#define TMC_EN_Pin GPIO_PIN_0
+#define TMC_EN_GPIO_Port GPIOC
 #define GreenLED_Pin GPIO_PIN_0
 #define GreenLED_GPIO_Port GPIOB
 #define BournsEncA_Pin GPIO_PIN_9
@@ -105,6 +107,8 @@ void Error_Handler(void);
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
+#define TMC_DIR_Pin GPIO_PIN_7
+#define TMC_DIR_GPIO_Port GPIOD
 #define EncMotorB_Pin GPIO_PIN_12
 #define EncMotorB_GPIO_Port GPIOG
 #define EncMotorB_EXTI_IRQn EXTI15_10_IRQn

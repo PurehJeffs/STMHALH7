@@ -1,5 +1,5 @@
-#ifndef PID_CONTROLLER_H_
-#define PID_CONTROLLER_H_
+#ifndef MOTOR_PID_CONTROLLER_H_
+#define MOTOR_PID_CONTROLLER_H_
 #include "main.h"
 
 typedef struct {
@@ -34,7 +34,19 @@ typedef struct {
 
 } PIDController;
 
+typedef struct {
+
+		TIM_HandleTypeDef *htim;
+		uint32_t channel;
+		GPIO_TypeDef *In1Port;
+		uint16_t In1Pin;
+		GPIO_TypeDef *In2Port;
+		uint16_t In2Pin;
+
+} PIDDCMotor_HandleTypeDef;
+
 void  PIDController_Init(PIDController *pid);
 float PIDController_Update(PIDController *pid, float setpoint, float measurement);
+void  DCMotor_PID(PIDController *pid, PIDDCMotor_HandleTypeDef *motor, float setpoint, float measurement);
 
 #endif

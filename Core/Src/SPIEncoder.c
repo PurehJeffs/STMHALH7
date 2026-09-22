@@ -67,3 +67,43 @@ HAL_StatusTypeDef Bourns_Encoder_Read(SPI_Encoder_HandleTypeDef *dev){
     dev->data[0] = rx[0];
   return status;
 }
+/*  old code from main for ems encoder
+uint16_t EMS22_2_ReadPosition(void)
+{
+
+    uint16_t tx[2] = {0x0000,0x0000};
+    uint16_t rx[2] = {0,0};
+    HAL_GPIO_WritePin(EMS22_2_CS_GPIO_Port,
+                      EMS22_2_CS_Pin,
+                      GPIO_PIN_RESET);
+
+    HAL_SPI_TransmitReceive(&hspi4,
+                        (uint8_t *)&tx,
+                        (uint8_t *)&rx,
+                        2,
+                        150);
+      
+
+    HAL_GPIO_WritePin(EMS22_2_CS_GPIO_Port,
+                      EMS22_2_CS_Pin,
+                      GPIO_PIN_SET);
+
+      uint16_t position = rx[0] & 0x7FE0;//0xFFE0
+      uint16_t position2 = rx[1] & 0x3FF0;
+      position = (position >> 5);
+      position2 = (position2 >> 4);
+
+    printf("RAW1: 0x%04X Position1: %u RAW2: 0x%04X Position2: %u Binary: ", rx[0], position, rx[1], position2);
+
+    for (int i = 15; i >= 0; i--)
+    {
+        printf("%d", (rx[0] >> i) & 1);
+    }
+    for (int i = 15; i >= 0; i--)
+    {
+        printf("%d", (rx[1] >> i) & 1);
+    }
+    printf("\r\n");
+    return rx[0];
+}
+*/
