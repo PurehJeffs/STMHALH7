@@ -42,11 +42,26 @@ typedef struct {
 		uint16_t In1Pin;
 		GPIO_TypeDef *In2Port;
 		uint16_t In2Pin;
+		GPIO_TypeDef *STBYPort;
+		uint16_t STBYPin;
 
 } PIDDCMotor_HandleTypeDef;
 
+typedef struct {
+
+		TIM_HandleTypeDef *htim;
+		UART_HandleTypeDef *huart;
+		uint32_t channel;
+		GPIO_TypeDef *DirPort;
+		uint16_t DirPin;
+		GPIO_TypeDef *EnPort;
+		uint16_t EnPin;
+
+} StepperMotor_HandleTypeDef;
+
 void  PIDController_Init(PIDController *pid);
 float PIDController_Update(PIDController *pid, float setpoint, float measurement);
+void  DCMotor_Init(PIDDCMotor_HandleTypeDef *motor);
 void  DCMotor_PID(PIDController *pid, PIDDCMotor_HandleTypeDef *motor, float setpoint, float measurement);
-
+void  StepMotor_PID(PIDController *pid, StepperMotor_HandleTypeDef *motor, float setpoint, float measurement);
 #endif

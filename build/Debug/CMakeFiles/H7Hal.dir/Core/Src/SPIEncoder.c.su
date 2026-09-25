@@ -1,3 +1,4 @@
 C:/Users/ubern/git/H7Hal/Core/Src/SPIEncoder.c:3:19:Bourns_Encoder_Init	32	static
 C:/Users/ubern/git/H7Hal/Core/Src/SPIEncoder.c:20:19:Bourns_Encoder_ReadAll	88	dynamic
 C:/Users/ubern/git/H7Hal/Core/Src/SPIEncoder.c:52:19:Bourns_Encoder_Read	32	static
+C:/Users/ubern/git/H7Hal/Core/Src/SPIEncoder.c:72:19:AS5048A_ReadPosition	32	static

@@ -19,7 +19,7 @@ HAL_StatusTypeDef AS5600_Init(AS5600_HandleTypeDef *dev, I2C_HandleTypeDef *hi2c
 	    return status;
 };
 
-HAL_StatusTypeDef AS5600_Read(AS5600_HandleTypeDef *dev, uint8_t reg, uint16_t *angle){
+HAL_StatusTypeDef AS5600_Read(AS5600_HandleTypeDef *dev, uint8_t reg){
 
 	HAL_StatusTypeDef status = HAL_OK;
 	uint8_t data[2];
@@ -28,8 +28,8 @@ HAL_StatusTypeDef AS5600_Read(AS5600_HandleTypeDef *dev, uint8_t reg, uint16_t *
 	if(status != HAL_OK)
 	        return status;
 
-	*angle = ((uint16_t)data[0] << 8) | data[1];
-	*angle &= 0x0FFF;
+	dev->angle = ((uint16_t)data[0] << 8) | data[1];
+	dev->angle &= 0x0FFF;
 
 	return status;
 };
@@ -62,15 +62,19 @@ HAL_StatusTypeDef AS5600_Config(AS5600_HandleTypeDef *dev){
 //	default:
 //	}
 //}
-HAL_StatusTypeDef AS5600_Status_MagnetDetect(AS5600_HandleTypeDef *dev, bool *detect){
+HAL_StatusTypeDef AS5600_Status_MagnetDetect(AS5600_HandleTypeDef *dev){
 	HAL_StatusTypeDef status = HAL_OK;
 	uint8_t regStatus;
 	if((status=HAL_I2C_Mem_Read(dev->hi2c,dev->addr,AS5600_STATUS, I2C_MEMADD_SIZE_8BIT, &regStatus, 1, HAL_MAX_DELAY))!=HAL_OK){
 		return status;
 	}
 
-	*detect = (regStatus & AS5600_STATUS_MD) != 0;
-
+	if ((regStatus & AS5600_STATUS_MD) != 0){
+	  printf("Detected");
+  }
+  else{
+	  printf("Not Detected");
+  }
 	return status;
 };
 //HAL_StatusTypeDef AS5600_Status_MagnetWeak(AS5600_HandleTypeDef *dev, bool *detect){

@@ -55,7 +55,7 @@ typedef struct
 HAL_StatusTypeDef AS5600_Init(AS5600_HandleTypeDef *dev, I2C_HandleTypeDef *hi2c, uint8_t addr,
 								GPIO_TypeDef *DirPort, uint16_t DirPin, uint8_t HYST);
 
-HAL_StatusTypeDef AS5600_Read(AS5600_HandleTypeDef *dev, uint8_t reg, uint16_t *angle);
+HAL_StatusTypeDef AS5600_Read(AS5600_HandleTypeDef *dev, uint8_t reg);
 
-HAL_StatusTypeDef AS5600_Status_MagnetDetect(AS5600_HandleTypeDef *dev, bool *detect);
+HAL_StatusTypeDef AS5600_Status_MagnetDetect(AS5600_HandleTypeDef *dev);
 #endif /* INC_AS5600_H_ */

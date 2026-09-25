@@ -1,3 +1,5 @@
 C:/Users/ubern/git/H7Hal/Core/Src/MotorPID.c:3:6:PIDController_Init	16	static
 C:/Users/ubern/git/H7Hal/Core/Src/MotorPID.c:16:7:PIDController_Update	32	static
 C:/Users/ubern/git/H7Hal/Core/Src/MotorPID.c:71:7:DCMotor_PID	32	static
+C:/Users/ubern/git/H7Hal/Core/Src/MotorPID.c:93:7:DCMotor_Init	16	static
+C:/Users/ubern/git/H7Hal/Core/Src/MotorPID.c:100:7:StepMotor_PID	24	static

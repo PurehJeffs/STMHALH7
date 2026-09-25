@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "MotorPID.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -83,6 +82,11 @@ IncEnc_HandleTypeDef MotorEnc=EXTINT(EncMotorA_GPIO_Port,EncMotorA_Pin,EncMotorB
 AS5600_HandleTypeDef encoder1;
 MPU6050_HandleTypeDef MPU1;
 SPI_Encoder_HandleTypeDef EMS22_2;
+SPI_Encoder_HandleTypeDef AS5048A={
+    .hspi = &hspi1,
+    .cs_port = AS5048A_CS_GPIO_Port,
+    .cs_pin = AS5048A_CS_Pin,
+};
 uint8_t A;
 uint8_t B;
 PIDDCMotor_HandleTypeDef DCMotor={
@@ -91,7 +95,9 @@ PIDDCMotor_HandleTypeDef DCMotor={
     .In1Port = MotorIN1_GPIO_Port,
     .In1Pin = MotorIN1_Pin,
     .In2Port = MotorIN2_GPIO_Port,
-    .In2Pin = MotorIN2_Pin
+    .In2Pin = MotorIN2_Pin,
+    .STBYPort = MotorSTBY_GPIO_Port,
+    .STBYPin = MotorSTBY_Pin
 };
 
 PIDController PID1 = {
@@ -140,34 +146,6 @@ void SWO_Init(void)
     ITM->TER = (1UL << 0);
 }
 
-uint16_t AS5048A_ReadPosition(void)
-{
-
-    uint16_t tx= 0xFFFF;
-    uint16_t rx;
-    HAL_GPIO_WritePin(AS5048A_CS_GPIO_Port,
-                      AS5048A_CS_Pin,
-                      GPIO_PIN_RESET);
-
-    HAL_SPI_TransmitReceive(&hspi1,
-                        (uint8_t *)&tx,
-                        (uint8_t *)&rx,
-                        1,
-                        HAL_MAX_DELAY);
-      
-
-    HAL_GPIO_WritePin(AS5048A_CS_GPIO_Port,
-                      AS5048A_CS_Pin,
-                      GPIO_PIN_SET);
-
-    rx = rx & 0x3FFF;
-
-    return rx;
-
-  
-}
-
-
 int _write(int fd, char* ptr, int len){
 	HAL_StatusTypeDef hstatus;
 	if(fd ==1 || fd == 2){
@@ -211,39 +189,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     default:
       break;
   }
-
-  // if(GPIO_Pin == GPIO_PIN_13) {
-  //   HAL_GPIO_TogglePin(RedLED_GPIO_Port, RedLED_Pin);
-
-  // }
-
-  // if(GPIO_Pin == BournsEncB_Pin || GPIO_Pin == BournsEncA_Pin) {
-	//   IncEncoder_EXTI(&Bourns);
-
-  // }
-
-  // else if(GPIO_Pin == EncMotorA_Pin || GPIO_Pin == EncMotorB_Pin) {
-  // 	  IncEncoder_EXTI(&MotorEnc);
-
-  //   }
-
-
-//  if(GPIO_Pin == BournsEncA_Pin)
-//   {
-//	  	A=HAL_GPIO_ReadPin(BournsEncA_GPIO_Port, BournsEncA_Pin);
-//	  	B=HAL_GPIO_ReadPin(BournsEncB_GPIO_Port, BournsEncB_Pin);
-//      // printf("A Trigger: %d%d\n\r",A,B);
-//      // IncEncoder_EXTI(&Bourns);
-//   }
-//
-//   if(GPIO_Pin == BournsEncB_Pin)
-//   {
-//	   B=HAL_GPIO_ReadPin(BournsEncB_GPIO_Port, BournsEncB_Pin);
-//	   A=HAL_GPIO_ReadPin(BournsEncA_GPIO_Port, BournsEncA_Pin);
-//
-//	   //printf("B Trigger: %d%d\n\r",A,B);
-//       //IncEncoder_EXTI(&Bourns);
-//   }
 
 }
 /* USER CODE END 0 */
@@ -291,19 +236,9 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   SWO_Init();
-  HAL_GPIO_WritePin(GreenLED_GPIO_Port, GreenLED_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(RedLED_GPIO_Port, RedLED_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(YellowLED_GPIO_Port, YellowLED_Pin, GPIO_PIN_SET);
 
-  HAL_GPIO_WritePin(MotorSTBY_GPIO_Port, MotorSTBY_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(MotorIN1_GPIO_Port, MotorIN1_Pin, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(MotorIN2_GPIO_Port, MotorIN2_Pin, GPIO_PIN_SET);
   printf("VS CODE VERSION\n\r");
 
-  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
-
- // __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, 500);
-  
   Bourns.PrevState =
       (HAL_GPIO_ReadPin(Bourns.portA, Bourns.pinA) << 1) |
        HAL_GPIO_ReadPin(Bourns.portB, Bourns.pinB);
@@ -317,26 +252,15 @@ int main(void)
 
   I2C_Scan();
   PIDController_Init(&PID1);
-  //IncEnc_HandleTypeDef Bourns=TWOPINGPIO(BournsEncA_GPIO_Port,BournsEncA_Pin,BournsEncB_GPIO_Port,BournsEncB_Pin);
+  DCMotor_Init(&DCMotor);
   Bourns_Encoder_Init(&EMS22_2, &hspi4, EMS22_2_CS_GPIO_Port, EMS22_2_CS_Pin, 2);
-
   MPU6050CInit(&MPU1, &hi2c2,MAINADDR);
   AS5600_Init(&encoder1, &hi2c2, AS5600_ADDR, 0, 0, 0);
-  uint16_t currentAngle,AS5048AAngle;
-  bool detect;
-  AS5600_Status_MagnetDetect(&encoder1, &detect);
-
-  if(detect){
-	  printf("Detected");
-  }
-  else{
-	  printf("Not Detected");
-  }
-
-  HAL_TIM_OC_Start(&htim2, TIM_CHANNEL_4);
-
+  AS5600_Status_MagnetDetect(&encoder1);
 
   
+  HAL_TIM_OC_Start(&htim2, TIM_CHANNEL_4);
+
   HAL_Delay(2000);
 
   /* USER CODE END 2 */
@@ -347,18 +271,17 @@ int main(void)
   while (1)
   {
       
-    AS5048AAngle = AS5048A_ReadPosition();
+    AS5048A_ReadPosition(&AS5048A);
     Bourns_Encoder_ReadAll(&EMS22_2);
-    AS5600_Read(&encoder1, AS5600_ANGLE1, &currentAngle);
+    AS5600_Read(&encoder1, AS5600_ANGLE1);
     uint16_t scaled = map_encoder(EMS22_2.data[0], 1024, 4098);
     MPU6050ReadAccelGyro(&MPU1);
-
     DCMotor_PID(&PID1, &DCMotor,(float)MotorEnc.Pos,Bourns.Pos);
 
-    printf("AS5048A Position: %f ", AS5048AAngle/45.508f);
+    printf("AS5048A Position: %f ", AS5048A.position/45.508f);
     printf("Position1: %u Position2: %u ", EMS22_2.data[0], EMS22_2.data[1]);
     //printf("Position: %u\r\n", position);
-	  printf("EncoderAbs: %d EncoderMag: %d EncoderMot: %d Sc: %d",Bourns.Pos,currentAngle,MotorEnc.Pos,scaled);
+	  printf("EncoderAbs: %d EncoderMag: %d EncoderMot: %d Sc: %d",Bourns.Pos,encoder1.angle,MotorEnc.Pos,scaled);
     printf("Za: %f  Ya: %f  Xa: %f  Zg: %f  Yg: %f  Xg: %f",((MPU1.ZACCEL)/8192.0f),((MPU1.YACCEL)/8192.0f),((MPU1.XACCEL)/8192.0f),
     														((MPU1.ZGYRO)/65.5f),((MPU1.YGYRO)/65.5f),((MPU1.XGYRO)/65.5f));
     printf("\r\n");

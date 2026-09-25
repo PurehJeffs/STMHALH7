@@ -66,7 +66,41 @@ HAL_StatusTypeDef Bourns_Encoder_Read(SPI_Encoder_HandleTypeDef *dev){
     HAL_GPIO_WritePin(dev->cs_port, dev->cs_pin, GPIO_PIN_SET);
     dev->data[0] = rx[0];
   return status;
+
 }
+
+HAL_StatusTypeDef AS5048A_ReadPosition(SPI_Encoder_HandleTypeDef *dev){
+    HAL_StatusTypeDef status = HAL_OK;
+    uint16_t tx= 0xFFFF;
+    uint16_t rx;
+    HAL_GPIO_WritePin(dev->cs_port,
+                      dev->cs_pin,
+                      GPIO_PIN_RESET);
+
+    status =  HAL_SPI_TransmitReceive(dev->hspi,
+                        (uint8_t *)&tx,
+                        (uint8_t *)&rx,
+                        1,
+                        HAL_MAX_DELAY);
+
+    if (status != HAL_OK)
+    {
+      printf("SPI Read Error: %d\r\n", status);
+      return status;
+    }  
+
+    HAL_GPIO_WritePin(dev->cs_port,
+                      dev->cs_pin,
+                      GPIO_PIN_SET);
+
+    dev->position = rx & 0x3FFF;
+
+    return status;
+}
+
+
+
+
 /*  old code from main for ems encoder
 uint16_t EMS22_2_ReadPosition(void)
 {

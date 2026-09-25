@@ -90,3 +90,12 @@ void  DCMotor_PID(PIDController *pid, PIDDCMotor_HandleTypeDef *motor, float set
 	}
 	
 }
+void  DCMotor_Init(PIDDCMotor_HandleTypeDef *motor) {
+	
+	HAL_GPIO_WritePin(motor->In1Port, motor->In1Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(motor->In2Port, motor->In2Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(motor->STBYPort, motor->STBYPin, GPIO_PIN_SET);
+	HAL_TIM_PWM_Start(motor->htim, motor->channel);
+}
+void  StepMotor_PID(PIDController *pid, StepperMotor_HandleTypeDef *motor, float setpoint, float measurement) {
+}
