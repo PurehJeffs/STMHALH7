@@ -99,8 +99,6 @@ HAL_StatusTypeDef AS5048A_ReadPosition(SPI_Encoder_HandleTypeDef *dev){
 }
 
 
-
-
 /*  old code from main for ems encoder
 uint16_t EMS22_2_ReadPosition(void)
 {

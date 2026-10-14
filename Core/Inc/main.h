@@ -43,7 +43,8 @@ extern I2C_HandleTypeDef hi2c2;
 #include "MPU6050.h"
 #include "IncEncoder.h"
 #include "SPIEncoder.h"
-#include "MotorPID.h"
+#include "PID.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

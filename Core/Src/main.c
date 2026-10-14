@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "MotorControl.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -257,7 +257,7 @@ int main(void)
   MPU6050CInit(&MPU1, &hi2c2,MAINADDR);
   AS5600_Init(&encoder1, &hi2c2, AS5600_ADDR, 0, 0, 0);
   AS5600_Status_MagnetDetect(&encoder1);
-
+  
   
   HAL_TIM_OC_Start(&htim2, TIM_CHANNEL_4);
 
@@ -271,31 +271,41 @@ int main(void)
   while (1)
   {
       
-    AS5048A_ReadPosition(&AS5048A);
-    Bourns_Encoder_ReadAll(&EMS22_2);
-    AS5600_Read(&encoder1, AS5600_ANGLE1);
-    uint16_t scaled = map_encoder(EMS22_2.data[0], 1024, 4098);
-    MPU6050ReadAccelGyro(&MPU1);
-    DCMotor_PID(&PID1, &DCMotor,(float)MotorEnc.Pos,Bourns.Pos);
+    // AS5048A_ReadPosition(&AS5048A);
+    // Bourns_Encoder_ReadAll(&EMS22_2);
+    // AS5600_Read(&encoder1, AS5600_ANGLE1);
+    // uint16_t scaled = map_encoder(EMS22_2.data[0], 1024, 4098);
+    // MPU6050ReadAccelGyro(&MPU1);
+    // DCMotor_PID(&PID1, &DCMotor,(float)MotorEnc.Pos,Bourns.Pos);
 
-    printf("AS5048A Position: %f ", AS5048A.position/45.508f);
-    printf("Position1: %u Position2: %u ", EMS22_2.data[0], EMS22_2.data[1]);
-    //printf("Position: %u\r\n", position);
-	  printf("EncoderAbs: %d EncoderMag: %d EncoderMot: %d Sc: %d",Bourns.Pos,encoder1.angle,MotorEnc.Pos,scaled);
-    printf("Za: %f  Ya: %f  Xa: %f  Zg: %f  Yg: %f  Xg: %f",((MPU1.ZACCEL)/8192.0f),((MPU1.YACCEL)/8192.0f),((MPU1.XACCEL)/8192.0f),
-    														((MPU1.ZGYRO)/65.5f),((MPU1.YGYRO)/65.5f),((MPU1.XGYRO)/65.5f));
-    printf("\r\n");
+    // printf("AS5048A Position: %f ", AS5048A.position/45.508f);
+    // printf("Position1: %u Position2: %u ", EMS22_2.data[0], EMS22_2.data[1]);
+    // //printf("Position: %u\r\n", position);
+	  // printf("EncoderAbs: %d EncoderMag: %d EncoderMot: %d Sc: %d",Bourns.Pos,encoder1.angle,MotorEnc.Pos,scaled);
+    // printf("Za: %f  Ya: %f  Xa: %f  Zg: %f  Yg: %f  Xg: %f",((MPU1.ZACCEL)/8192.0f),((MPU1.YACCEL)/8192.0f),((MPU1.XACCEL)/8192.0f),
+    // 														((MPU1.ZGYRO)/65.5f),((MPU1.YGYRO)/65.5f),((MPU1.XGYRO)/65.5f));
+    // printf("\r\n");
 
-    
-      // HAL_Delay(5000);
-      // __HAL_TIM_SET_AUTORELOAD(&htim2, (1017*2));
-      // HAL_Delay(5000);
-      // __HAL_TIM_SET_AUTORELOAD(&htim2, (1017*3));
-      // HAL_Delay(5000);
-      // __HAL_TIM_SET_AUTORELOAD(&htim2, (1017));
+      __HAL_TIM_SET_AUTORELOAD(&htim2, (1017*22));
+      printf("22 ARR\r\n");
+      HAL_Delay(5000);
+     
+      __HAL_TIM_SET_AUTORELOAD(&htim2, (1017*24));
+      printf("24 ARR\r\n");
+      HAL_Delay(5000);
+
+       __HAL_TIM_SET_AUTORELOAD(&htim2, (1017*27));
+      printf("27 ARR\r\n");
+      HAL_Delay(5000);
+
+      __HAL_TIM_SET_AUTORELOAD(&htim2, (1017*30));
+      printf("30 ARR\r\n");
+      HAL_Delay(5000);
+
+      // __HAL_TIM_SET_AUTORELOAD(&htim2, (550));
+      // printf("550 ARR\r\n");
       // HAL_Delay(5000);
 
-    
 
    
     // printf("Target: %d Error: %d EncoderMot: %d pidOut: %f", Bourns.Pos, Bourns.Pos - MotorEnc.Pos, MotorEnc.Pos, PID1.out);

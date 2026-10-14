@@ -35,7 +35,7 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 75,
+				"line" : 83,
 				"parent" : 0
 			},
 			{
@@ -50,7 +50,7 @@
 			{
 				"command" : 3,
 				"file" : 0,
-				"line" : 56,
+				"line" : 58,
 				"parent" : 0
 			},
 			{
@@ -102,6 +102,30 @@
 					"path" : "C:/Users/ubern/git/H7Hal/Core/Inc"
 				},
 				{
+					"backtrace" : 5,
+					"path" : "C:/Users/ubern/git/H7Hal/Drivers/BSP/AS5600"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/Users/ubern/git/H7Hal/Drivers/BSP/IncEncoder"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/Users/ubern/git/H7Hal/Drivers/BSP/MPU6050"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/Users/ubern/git/H7Hal/Drivers/BSP/PID"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/Users/ubern/git/H7Hal/Drivers/BSP/SPIEncoder"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/Users/ubern/git/H7Hal/Drivers/BSP/MotorControl"
+				},
+				{
 					"backtrace" : 4,
 					"path" : "C:/Users/ubern/git/H7Hal/cmake/stm32cubemx/../../Core/Inc"
 				},
@@ -146,7 +170,9 @@
 				7,
 				8,
 				9,
-				10
+				10,
+				11,
+				12
 			]
 		},
 		{
@@ -180,6 +206,30 @@
 				{
 					"backtrace" : 5,
 					"path" : "C:/Users/ubern/git/H7Hal/Core/Inc"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/Users/ubern/git/H7Hal/Drivers/BSP/AS5600"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/Users/ubern/git/H7Hal/Drivers/BSP/IncEncoder"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/Users/ubern/git/H7Hal/Drivers/BSP/MPU6050"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/Users/ubern/git/H7Hal/Drivers/BSP/PID"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/Users/ubern/git/H7Hal/Drivers/BSP/SPIEncoder"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/Users/ubern/git/H7Hal/Drivers/BSP/MotorControl"
 				},
 				{
 					"backtrace" : 4,
@@ -273,7 +323,9 @@
 				7,
 				8,
 				9,
-				10
+				10,
+				11,
+				12
 			]
 		},
 		{
@@ -287,8 +339,6 @@
 			"name" : "Object Libraries",
 			"sourceIndexes" : 
 			[
-				11,
-				12,
 				13,
 				14,
 				15,
@@ -314,7 +364,9 @@
 				35,
 				36,
 				37,
-				38
+				38,
+				39,
+				40
 			]
 		}
 	],
@@ -359,31 +411,43 @@
 		{
 			"backtrace" : 7,
 			"compileGroupIndex" : 0,
-			"path" : "Core/Src/AS5600.c",
+			"path" : "Drivers/BSP/AS5600/AS5600.c",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 7,
 			"compileGroupIndex" : 0,
-			"path" : "Core/Src/MPU6050.c",
+			"path" : "Drivers/BSP/MPU6050/MPU6050.c",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 7,
 			"compileGroupIndex" : 0,
-			"path" : "Core/Src/IncEncoder.c",
+			"path" : "Drivers/BSP/IncEncoder/IncEncoder.c",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 7,
 			"compileGroupIndex" : 0,
-			"path" : "Core/Src/SPIEncoder.c",
+			"path" : "Drivers/BSP/SPIEncoder/SPIEncoder.c",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 7,
 			"compileGroupIndex" : 0,
-			"path" : "Core/Src/MotorPID.c",
+			"path" : "Drivers/BSP/PID/PID.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 7,
+			"compileGroupIndex" : 0,
+			"path" : "Drivers/BSP/MotorControl/MotorControl.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 7,
+			"compileGroupIndex" : 0,
+			"path" : "Core/Src/EncInterface.c",
 			"sourceGroupIndex" : 0
 		},
 		{

@@ -1,5 +1,5 @@
-#ifndef MOTOR_PID_CONTROLLER_H_
-#define MOTOR_PID_CONTROLLER_H_
+#ifndef PID_CONTROLLER_H_
+#define PID_CONTROLLER_H_
 #include "main.h"
 
 typedef struct {

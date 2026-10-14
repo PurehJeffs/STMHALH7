@@ -45,17 +45,25 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
-    Core/Src/AS5600.c
-    Core/Src/MPU6050.c
-    Core/Src/IncEncoder.c
-    Core/Src/SPIEncoder.c
-    Core/Src/MotorPID.c
+    Drivers/BSP/AS5600/AS5600.c
+    Drivers/BSP/MPU6050/MPU6050.c
+    Drivers/BSP/IncEncoder/IncEncoder.c
+    Drivers/BSP/SPIEncoder/SPIEncoder.c
+    Drivers/BSP/PID/PID.c
+    Drivers/BSP/MotorControl/MotorControl.c
+    Core/Src/EncInterface.c
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     Core/Inc
+    Drivers/BSP/AS5600
+    Drivers/BSP/IncEncoder
+    Drivers/BSP/MPU6050
+    Drivers/BSP/PID
+    Drivers/BSP/SPIEncoder
+    Drivers/BSP/MotorControl
 )
 
 # Add project symbols (macros)

@@ -24,7 +24,7 @@ HAL_StatusTypeDef AS5600_Read(AS5600_HandleTypeDef *dev, uint8_t reg){
 	HAL_StatusTypeDef status = HAL_OK;
 	uint8_t data[2];
 
-	status = HAL_I2C_Mem_Read(dev->hi2c, dev->addr, reg, I2C_MEMADD_SIZE_8BIT, data, 2, HAL_MAX_DELAY);
+	status = HAL_I2C_Mem_Read(dev->hi2c, dev->addr, reg, I2C_MEMADD_SIZE_8BIT, data, 2, 3);
 	if(status != HAL_OK)
 	        return status;
 
