@@ -30,7 +30,8 @@ typedef struct {
 
 }PIDMOTOR_HandleTypeDef;
 
-#define DCMotor(PID_, TIM_, CH_, IN1_PORT, IN1_PIN, IN2_PORT, IN2_PIN, STBY_PORT, STBY_PIN) \
+#define DCMotor(PID_, TIM_, CH_, IN1_PORT, IN1_PIN,    \
+                IN2_PORT, IN2_PIN, STBY_PORT, STBY_PIN) \
 {                                       \
   .type     = MOTOR_TYPE_DC,            \
   .pid      = (PID_),                   \
@@ -46,33 +47,33 @@ typedef struct {
 
 
 #define StepMotor(PID_, TIM_, CH_, DIR_PORT, DIR_PIN, EN_PORT, EN_PIN) \
-{                                                                               \
-  .type = MOTOR_TYPE_STEP,                                                       \
-  .pid = (PID_),                                                                 \
-  .htim = (TIM_),                                                                \
-  .channel = (CH_),                                                              \
-  .DirPort = (DIR_PORT),                                                         \
-  .DirPin = (DIR_PIN),                                                           \
-  .EnPort = (EN_PORT),                                                           \
-  .EnPin = (EN_PIN),                                                             \
+{                                                                      \
+  .type = MOTOR_TYPE_STEP,                                             \
+  .pid = (PID_),                                                       \
+  .htim = (TIM_),                                                      \
+  .channel = (CH_),                                                    \
+  .DirPort = (DIR_PORT),                                               \
+  .DirPin = (DIR_PIN),                                                 \
+  .EnPort = (EN_PORT),                                                 \
+  .EnPin = (EN_PIN),                                                   \
 }
 
 
 
 #define BLDCMotor(PID_, TIM_, CH_, DIR_PORT, DIR_PIN, EN_PORT, EN_PIN) \
-{                                                                               \
-  .type = MOTOR_TYPE_BLDC,                                                       \
-  .pid = (PID_),                                                                 \
-  .htim = (TIM_),                                                                \
-  .channel = (CH_),                                                              \
-  .DirPort = (DIR_PORT),                                                         \
-  .DirPin = (DIR_PIN),                                                           \
-  .EnPort = (EN_PORT),                                                           \
-  .EnPin = (EN_PIN),                                                             \
+{                                                                      \
+  .type = MOTOR_TYPE_BLDC,                                             \
+  .pid = (PID_),                                                       \
+  .htim = (TIM_),                                                      \
+  .channel = (CH_),                                                    \
+  .DirPort = (DIR_PORT),                                               \
+  .DirPin = (DIR_PIN),                                                 \
+  .EnPort = (EN_PORT),                                                 \
+  .EnPin = (EN_PIN),                                                   \
 }
 
 
-void  DCMotor_PID1(PIDMOTOR_HandleTypeDef *motor, float setpoint, float measurement);
-void  DCMotor_Init1(PIDMOTOR_HandleTypeDef *motor);
+void  DCMotor_PID(PIDMOTOR_HandleTypeDef *motor, float setpoint, float measurement);
+void  DCMotor_PIDInit(PIDMOTOR_HandleTypeDef *motor);
 
 #endif /* MOTOR_CONTROL_H_ */

@@ -61,7 +61,6 @@ typedef struct {
 
 void  PIDController_Init(PIDController *pid);
 float PIDController_Update(PIDController *pid, float setpoint, float measurement);
-void  DCMotor_Init(PIDDCMotor_HandleTypeDef *motor);
-void  DCMotor_PID(PIDController *pid, PIDDCMotor_HandleTypeDef *motor, float setpoint, float measurement);
+
 void  StepMotor_PID(PIDController *pid, StepperMotor_HandleTypeDef *motor, float setpoint, float measurement);
 #endif

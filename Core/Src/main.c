@@ -59,6 +59,30 @@ UART_HandleTypeDef huart3;
 /* USER CODE BEGIN PV */
 
 uint16_t adc_buf[ADC_LEN];
+PIDController PID1 = {
+    .Kp = 1.0f,
+    .Ki = 0.5f,
+    .Kd = 0.02f,
+    .tau = 0.02f,
+    .limMin = -1000.0f,
+    .limMax = 1000.0f,
+    .limMinInt = -300.0f,
+    .limMaxInt = 2300.0f,
+    .T = 0.01f, // Sample time in seconds
+};
+
+PIDMOTOR_HandleTypeDef DCMotor=DCMotor(&PID1,&htim4,TIM_CHANNEL_3,MotorIN1_GPIO_Port,MotorIN1_Pin,
+                                        MotorIN2_GPIO_Port,MotorIN2_Pin,MotorSTBY_GPIO_Port,MotorSTBY_Pin);
+IncEnc_HandleTypeDef Bourns=EXTINT(BournsEncA_GPIO_Port,BournsEncA_Pin,BournsEncB_GPIO_Port,BournsEncB_Pin);
+IncEnc_HandleTypeDef MotorEnc=EXTINT(EncMotorA_GPIO_Port,EncMotorA_Pin,EncMotorB_GPIO_Port,EncMotorB_Pin);
+AS5600_HandleTypeDef encoder1;
+MPU6050_HandleTypeDef MPU1;
+SPI_Encoder_HandleTypeDef EMS22_2;
+SPI_Encoder_HandleTypeDef AS5048A={
+    .hspi = &hspi1,
+    .cs_port = AS5048A_CS_GPIO_Port,
+    .cs_pin = AS5048A_CS_Pin,
+};
 
 /* USER CODE END PV */
 
@@ -77,40 +101,6 @@ static void MX_TIM2_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
-IncEnc_HandleTypeDef Bourns=EXTINT(BournsEncA_GPIO_Port,BournsEncA_Pin,BournsEncB_GPIO_Port,BournsEncB_Pin);
-IncEnc_HandleTypeDef MotorEnc=EXTINT(EncMotorA_GPIO_Port,EncMotorA_Pin,EncMotorB_GPIO_Port,EncMotorB_Pin);
-AS5600_HandleTypeDef encoder1;
-MPU6050_HandleTypeDef MPU1;
-SPI_Encoder_HandleTypeDef EMS22_2;
-SPI_Encoder_HandleTypeDef AS5048A={
-    .hspi = &hspi1,
-    .cs_port = AS5048A_CS_GPIO_Port,
-    .cs_pin = AS5048A_CS_Pin,
-};
-uint8_t A;
-uint8_t B;
-PIDDCMotor_HandleTypeDef DCMotor={
-    .htim = &htim4,
-    .channel = TIM_CHANNEL_3,
-    .In1Port = MotorIN1_GPIO_Port,
-    .In1Pin = MotorIN1_Pin,
-    .In2Port = MotorIN2_GPIO_Port,
-    .In2Pin = MotorIN2_Pin,
-    .STBYPort = MotorSTBY_GPIO_Port,
-    .STBYPin = MotorSTBY_Pin
-};
-
-PIDController PID1 = {
-    .Kp = 1.0f,
-    .Ki = 0.5f,
-    .Kd = 0.02f,
-    .tau = 0.02f,
-    .limMin = -1000.0f,
-    .limMax = 1000.0f,
-    .limMinInt = -300.0f,
-    .limMaxInt = 2300.0f,
-    .T = 0.01f, // Sample time in seconds
-};
 
 /* USER CODE END PFP */
 
@@ -252,7 +242,7 @@ int main(void)
 
   I2C_Scan();
   PIDController_Init(&PID1);
-  DCMotor_Init(&DCMotor);
+  DCMotor_PIDInit(&DCMotor);
   Bourns_Encoder_Init(&EMS22_2, &hspi4, EMS22_2_CS_GPIO_Port, EMS22_2_CS_Pin, 2);
   MPU6050CInit(&MPU1, &hi2c2,MAINADDR);
   AS5600_Init(&encoder1, &hi2c2, AS5600_ADDR, 0, 0, 0);
@@ -271,36 +261,36 @@ int main(void)
   while (1)
   {
       
-    // AS5048A_ReadPosition(&AS5048A);
-    // Bourns_Encoder_ReadAll(&EMS22_2);
-    // AS5600_Read(&encoder1, AS5600_ANGLE1);
-    // uint16_t scaled = map_encoder(EMS22_2.data[0], 1024, 4098);
-    // MPU6050ReadAccelGyro(&MPU1);
-    // DCMotor_PID(&PID1, &DCMotor,(float)MotorEnc.Pos,Bourns.Pos);
+    AS5048A_ReadPosition(&AS5048A);
+    Bourns_Encoder_ReadAll(&EMS22_2);
+    AS5600_Read(&encoder1, AS5600_ANGLE1);
+    uint16_t scaled = map_encoder(EMS22_2.data[0], 1024, 4098);
+    MPU6050ReadAccelGyro(&MPU1);
+    DCMotor_PID( &DCMotor,(float)MotorEnc.Pos,Bourns.Pos);
 
-    // printf("AS5048A Position: %f ", AS5048A.position/45.508f);
-    // printf("Position1: %u Position2: %u ", EMS22_2.data[0], EMS22_2.data[1]);
-    // //printf("Position: %u\r\n", position);
-	  // printf("EncoderAbs: %d EncoderMag: %d EncoderMot: %d Sc: %d",Bourns.Pos,encoder1.angle,MotorEnc.Pos,scaled);
-    // printf("Za: %f  Ya: %f  Xa: %f  Zg: %f  Yg: %f  Xg: %f",((MPU1.ZACCEL)/8192.0f),((MPU1.YACCEL)/8192.0f),((MPU1.XACCEL)/8192.0f),
-    // 														((MPU1.ZGYRO)/65.5f),((MPU1.YGYRO)/65.5f),((MPU1.XGYRO)/65.5f));
-    // printf("\r\n");
+    printf("AS5048A Position: %f ", AS5048A.position/45.508f);
+    printf("Position1: %u Position2: %u ", EMS22_2.data[0], EMS22_2.data[1]);
+    //printf("Position: %u\r\n", position);
+	  printf("EncoderAbs: %d EncoderMag: %d EncoderMot: %d Sc: %d",Bourns.Pos,encoder1.angle,MotorEnc.Pos,scaled);
+    printf("Za: %f  Ya: %f  Xa: %f  Zg: %f  Yg: %f  Xg: %f",((MPU1.ZACCEL)/8192.0f),((MPU1.YACCEL)/8192.0f),((MPU1.XACCEL)/8192.0f),
+    														((MPU1.ZGYRO)/65.5f),((MPU1.YGYRO)/65.5f),((MPU1.XGYRO)/65.5f));
+    printf("\r\n");
 
-      __HAL_TIM_SET_AUTORELOAD(&htim2, (1017*22));
-      printf("22 ARR\r\n");
-      HAL_Delay(5000);
+      // __HAL_TIM_SET_AUTORELOAD(&htim2, (1017*22));
+      // printf("22 ARR\r\n");
+      // HAL_Delay(5000);
      
-      __HAL_TIM_SET_AUTORELOAD(&htim2, (1017*24));
-      printf("24 ARR\r\n");
-      HAL_Delay(5000);
+      // __HAL_TIM_SET_AUTORELOAD(&htim2, (1017*24));
+      // printf("24 ARR\r\n");
+      // HAL_Delay(5000);
 
-       __HAL_TIM_SET_AUTORELOAD(&htim2, (1017*27));
-      printf("27 ARR\r\n");
-      HAL_Delay(5000);
+      //  __HAL_TIM_SET_AUTORELOAD(&htim2, (1017*27));
+      // printf("27 ARR\r\n");
+      // HAL_Delay(5000);
 
-      __HAL_TIM_SET_AUTORELOAD(&htim2, (1017*30));
-      printf("30 ARR\r\n");
-      HAL_Delay(5000);
+      // __HAL_TIM_SET_AUTORELOAD(&htim2, (1017*30));
+      // printf("30 ARR\r\n");
+      // HAL_Delay(5000);
 
       // __HAL_TIM_SET_AUTORELOAD(&htim2, (550));
       // printf("550 ARR\r\n");
