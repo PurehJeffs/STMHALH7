@@ -227,8 +227,6 @@ int main(void)
   /* USER CODE BEGIN 2 */
   SWO_Init();
 
-  printf("VS CODE VERSION\n\r");
-
   Bourns.PrevState =
       (HAL_GPIO_ReadPin(Bourns.portA, Bourns.pinA) << 1) |
        HAL_GPIO_ReadPin(Bourns.portB, Bourns.pinB);
