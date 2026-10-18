@@ -1,0 +1,1 @@
+docker run --rm -v "${PWD}:/project" h7hal-build bash -c "cmake -S . -B build/docker -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/gcc-arm-none-eabi.cmake -DCMAKE_BUILD_TYPE=Debug && cmake --build build/docker"
