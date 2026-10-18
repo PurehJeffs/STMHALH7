@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t h7hal-build Tools/h7hal-build
+
+      - name: Build firmware
+        run: |
+          docker run --rm -v "$PWD":/project h7hal-build bash -c \
+            "cmake -S . -B build/docker -G Ninja \
+              -DCMAKE_TOOLCHAIN_FILE=cmake/gcc-arm-none-eabi.cmake \
+              -DCMAKE_BUILD_TYPE=Debug \
+            && cmake --build build/docker"
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-debug
+          path: |
+            build/docker/*.elf
+            build/docker/*.map
