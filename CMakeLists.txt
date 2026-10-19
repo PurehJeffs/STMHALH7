@@ -52,6 +52,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Drivers/BSP/PID/PID.c
     Drivers/BSP/MotorControl/MotorControl.c
     Core/Src/EncInterface.c
+    Drivers/BSP/VL6180X/VL6180X.c
 )
 
 # Add include paths
@@ -64,6 +65,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     Drivers/BSP/PID
     Drivers/BSP/SPIEncoder
     Drivers/BSP/MotorControl
+    Drivers/BSP/VL6180X
 )
 
 # Add project symbols (macros)

@@ -116,6 +116,7 @@ void I2C_Scan(void)
         {
             printf("Found device at 0x%02X\r\n", addr);
         }
+      
     }
 
     printf("Scan complete.\r\n");
@@ -249,7 +250,7 @@ int main(void)
   
   HAL_TIM_OC_Start(&htim2, TIM_CHANNEL_4);
 
-  HAL_Delay(2000);
+  HAL_Delay(5000);
 
   /* USER CODE END 2 */
 
