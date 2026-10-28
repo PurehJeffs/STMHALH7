@@ -44,7 +44,7 @@ extern I2C_HandleTypeDef hi2c2;
 #include "IncEncoder.h"
 #include "SPIEncoder.h"
 #include "PID.h"
-
+#include "VL6180X.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

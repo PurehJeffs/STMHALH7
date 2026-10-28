@@ -70,7 +70,11 @@ PIDController PID1 = {
     .limMaxInt = 2300.0f,
     .T = 0.01f, // Sample time in seconds
 };
-
+VL6180X_HandleTypeDef vl6180x = {
+    .hi2c = &hi2c2,
+    .addr = VL6180X_DEFAULT_ADDRESS,
+    .mode = RANGE_SINGLE,
+};
 PIDMOTOR_HandleTypeDef DCMotor=DCMotor(&PID1,&htim4,TIM_CHANNEL_3,MotorIN1_GPIO_Port,MotorIN1_Pin,
                                         MotorIN2_GPIO_Port,MotorIN2_Pin,MotorSTBY_GPIO_Port,MotorSTBY_Pin);
 IncEnc_HandleTypeDef Bourns=EXTINT(BournsEncA_GPIO_Port,BournsEncA_Pin,BournsEncB_GPIO_Port,BournsEncB_Pin);
@@ -227,7 +231,7 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   SWO_Init();
-
+  VL6180X_Init(&vl6180x);
   Bourns.PrevState =
       (HAL_GPIO_ReadPin(Bourns.portA, Bourns.pinA) << 1) |
        HAL_GPIO_ReadPin(Bourns.portB, Bourns.pinB);
@@ -259,21 +263,22 @@ int main(void)
 
   while (1)
   {
-      
-    AS5048A_ReadPosition(&AS5048A);
-    Bourns_Encoder_ReadAll(&EMS22_2);
-    AS5600_Read(&encoder1, AS5600_ANGLE1);
-    uint16_t scaled = map_encoder(EMS22_2.data[0], 1024, 4098);
-    MPU6050ReadAccelGyro(&MPU1);
-    DCMotor_PID( &DCMotor,(float)MotorEnc.Pos,Bourns.Pos);
+     VL6180X_Read(&vl6180x);
+     printf("VL6180X Range: %d mm\r\n", vl6180x.range_mm);
+    // AS5048A_ReadPosition(&AS5048A);
+    // Bourns_Encoder_ReadAll(&EMS22_2);
+    // AS5600_Read(&encoder1, AS5600_ANGLE1);
+    // uint16_t scaled = map_encoder(EMS22_2.data[0], 1024, 4098);
+    // MPU6050ReadAccelGyro(&MPU1);
+    // DCMotor_PID( &DCMotor,(float)MotorEnc.Pos,Bourns.Pos);
 
-    printf("AS5048A Position: %f ", AS5048A.position/45.508f);
-    printf("Position1: %u Position2: %u ", EMS22_2.data[0], EMS22_2.data[1]);
-    //printf("Position: %u\r\n", position);
-	  printf("EncoderAbs: %d EncoderMag: %d EncoderMot: %d Sc: %d",Bourns.Pos,encoder1.angle,MotorEnc.Pos,scaled);
-    printf("Za: %f  Ya: %f  Xa: %f  Zg: %f  Yg: %f  Xg: %f",((MPU1.ZACCEL)/8192.0f),((MPU1.YACCEL)/8192.0f),((MPU1.XACCEL)/8192.0f),
-    														((MPU1.ZGYRO)/65.5f),((MPU1.YGYRO)/65.5f),((MPU1.XGYRO)/65.5f));
-    printf("\r\n");
+    // printf("AS5048A Position: %f ", AS5048A.position/45.508f);
+    // printf("Position1: %u Position2: %u ", EMS22_2.data[0], EMS22_2.data[1]);
+    // //printf("Position: %u\r\n", position);
+	  // printf("EncoderAbs: %d EncoderMag: %d EncoderMot: %d Sc: %d",Bourns.Pos,encoder1.angle,MotorEnc.Pos,scaled);
+    // printf("Za: %f  Ya: %f  Xa: %f  Zg: %f  Yg: %f  Xg: %f",((MPU1.ZACCEL)/8192.0f),((MPU1.YACCEL)/8192.0f),((MPU1.XACCEL)/8192.0f),
+    // 														((MPU1.ZGYRO)/65.5f),((MPU1.YGYRO)/65.5f),((MPU1.XGYRO)/65.5f));
+    // printf("\r\n");
 
       // __HAL_TIM_SET_AUTORELOAD(&htim2, (1017*22));
       // printf("22 ARR\r\n");

@@ -2,7 +2,7 @@
 #define VL6180X_H_
 #include "main.h"
 
-#define VL6180X_DEFAULT_ADDRESS                0x29U
+#define VL6180X_DEFAULT_ADDRESS                0x52 //(0x29 << 1) 
 
 #define VL6180X_REG_SYSRANGE_START             0x0018U
 #define VL6180X_REG_SYSALS_START               0x0038U
@@ -35,13 +35,13 @@ typedef enum {
 typedef struct
 {
     I2C_HandleTypeDef *hi2c;
-    uint8_t addr;
+    uint16_t addr;
     uint16_t range_mm;
     MODEType_t mode;
 
 } VL6180X_HandleTypeDef;
 
-
+HAL_StatusTypeDef VL6180X_Poll(VL6180X_HandleTypeDef *dev);
 HAL_StatusTypeDef VL6180X_Init(VL6180X_HandleTypeDef *dev);
-
+HAL_StatusTypeDef VL6180X_Read(VL6180X_HandleTypeDef *dev);
 #endif /* VL6180X_H_ */
